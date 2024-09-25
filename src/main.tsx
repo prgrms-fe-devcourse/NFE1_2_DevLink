@@ -10,6 +10,7 @@ import PostDetailPage from "./pages/PostDetailPage";
 import PostCreatePage from "./pages/PostCreatePage";
 import PostModifyPage from "./pages/PostModifyPage";
 import ProfilePage from "./pages/ProfilePage";
+import ReduxProvider from "./features/redux/Provider";
 
 const router = createBrowserRouter([
   // 로그인 페이지
@@ -51,6 +52,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <ReduxProvider>
+      <RouterProvider router={router} />
+    </ReduxProvider>
   </StrictMode>
 );

@@ -2,6 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "antd";
 import styled from "styled-components";
 
+import { useAppDispatch, useAppSelector } from "../hooks/useAppRedux";
+import { decrement, increment } from "../features/counter/counterSlice";
+
 // TODO: Remove this
 const NavigationButtons = () => {
   const navigate = useNavigate();
@@ -20,12 +23,24 @@ const NavigationButtons = () => {
 };
 
 const MainPage = () => {
+  const dispatch = useAppDispatch();
+  const { value: count } = useAppSelector((state) => state.counter);
+
   return (
     <main>
       <NavigationButtons />
       <Wrapper>
         <Title>Hello World, this is my first styled component!</Title>
       </Wrapper>
+      <div>
+        <Button aria-label="Increment value" onClick={() => dispatch(increment())}>
+          Increment
+        </Button>
+        <Button aria-label="Decrement value" onClick={() => dispatch(decrement())}>
+          Decrement
+        </Button>
+        <CountDisplay>{count}</CountDisplay>
+      </div>
     </main>
   );
 };
@@ -39,6 +54,10 @@ const Title = styled.h1`
   font-size: 1.5em;
   text-align: center;
   color: palevioletred;
+`;
+
+const CountDisplay = styled(Title)`
+  text-align: left;
 `;
 
 export default MainPage;
