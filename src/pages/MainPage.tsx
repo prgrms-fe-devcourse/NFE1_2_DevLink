@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { Button } from "antd";
+import styled from "styled-components";
 
 // TODO: Remove this
 const NavigationButtons = () => {
@@ -6,13 +8,13 @@ const NavigationButtons = () => {
 
   return (
     <div>
-      <button onClick={() => navigate("/signin")}>로그인</button>
-      <button onClick={() => navigate("/signup")}>회원가입</button>
-      <button onClick={() => navigate("/")}>메인 페이지</button>
-      <button onClick={() => navigate("/post/create")}>포스트 생성</button>
-      <button onClick={() => navigate("/post/1")}>포스트 상세 (예시: postId = 1)</button>
-      <button onClick={() => navigate("/post/modify/1")}>포스트 수정 (예시: postId = 1)</button>
-      <button onClick={() => navigate("/profile/1")}>마이페이지 (예시: userId = 1)</button>
+      <Button onClick={() => navigate("/signin")}>로그인</Button>
+      <Button onClick={() => navigate("/signup")}>회원가입</Button>
+      <Button onClick={() => navigate("/")}>메인 페이지</Button>
+      <Button onClick={() => navigate("/post/create")}>포스트 생성</Button>
+      <Button onClick={() => navigate("/post/1")}>포스트 상세 (예시: postId = 1)</Button>
+      <Button onClick={() => navigate("/post/modify/1")}>포스트 수정 (예시: postId = 1)</Button>
+      <Button onClick={() => navigate("/profile/1")}>마이페이지 (예시: userId = 1)</Button>
     </div>
   );
 };
@@ -20,10 +22,23 @@ const NavigationButtons = () => {
 const MainPage = () => {
   return (
     <main>
-      <div>MainPage</div>
       <NavigationButtons />
+      <Wrapper>
+        <Title>Hello World, this is my first styled component!</Title>
+      </Wrapper>
     </main>
   );
 };
+
+const Wrapper = styled.section`
+  padding: 4em;
+  background: papayawhip;
+`;
+
+const Title = styled.h1`
+  font-size: 1.5em;
+  text-align: center;
+  color: palevioletred;
+`;
 
 export default MainPage;
