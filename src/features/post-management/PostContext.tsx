@@ -1,5 +1,5 @@
 import { createContext, PropsWithChildren, useReducer } from "react";
-import { PostAction, PostContextProps, PostState } from "./type";
+import { PostAction, PostActionType, PostContextProps, PostState } from "./type";
 
 const initialState: PostState = {
   title: "",
@@ -10,17 +10,17 @@ const initialState: PostState = {
 
 const postReducer = (state: PostState, action: PostAction): PostState => {
   switch (action.type) {
-    case "SET_TITLE":
+    case PostActionType.SET_TITLE:
       return { ...state, title: action.payload };
-    case "SET_CODE":
+    case PostActionType.SET_CODE:
       return { ...state, code: action.payload };
-    case "SET_BODY":
+    case PostActionType.SET_BODY:
       return { ...state, body: action.payload };
-    case "SET_SUMMARY":
+    case PostActionType.SET_SUMMARY:
       return { ...state, summary: action.payload };
-    case "SET_ALL":
+    case PostActionType.SET_ALL:
       return { ...action.payload };
-    case "RESET":
+    case PostActionType.RESET:
       return initialState;
     default:
       throw new Error("Unhandled action type");
