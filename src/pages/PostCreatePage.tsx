@@ -1,10 +1,12 @@
+import { PostForm, PostFormFooter, PostFormHeader } from "../features/post-management";
 import { PostProvider } from "../features/post-management/PostContext";
-import PostForm from "../features/post-management/PostForm";
 
 const PostCreatePage = () => {
   return (
     <PostProvider>
+      <PostFormHeader />
       <PostForm />
+      <PostFormFooter />
     </PostProvider>
   );
 };
