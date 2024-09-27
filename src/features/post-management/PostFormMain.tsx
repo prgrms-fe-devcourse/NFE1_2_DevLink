@@ -50,14 +50,14 @@ const OuterContainer = styled.main`
   flex: 1;
   display: flex;
   justify-content: center;
-  background: blue;
 `;
 
 const InnerContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: ${style.container.width}px;
-  background: pink;
+  padding: 40px;
+  background: ${style.background};
 `;
 
 export default PostFormMain;

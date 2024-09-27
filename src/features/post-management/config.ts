@@ -9,6 +9,8 @@ const config = {
     bottom: {
       height: 80,
     },
+    outerBackground: "white",
+    background: "#e5e5e5",
   },
 };
 

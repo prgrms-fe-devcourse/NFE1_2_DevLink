@@ -7,7 +7,7 @@ const PostFormHeader = () => {
   return (
     <OuterContainer>
       <InnerContainer>
-        <Button>버튼</Button>
+        <Button>포스트 미리보기</Button>
       </InnerContainer>
     </OuterContainer>
   );
@@ -20,14 +20,17 @@ const OuterContainer = styled.header`
   align-items: center;
   justify-content: center;
   height: ${style.bottom.height}px;
-  background: green;
+  /* background: green; */
 `;
 
 const InnerContainer = styled.div`
   display: flex;
+  height: 100%;
+  align-items: center;
   justify-content: flex-end;
   width: ${style.container.width}px;
-  background: powderblue;
+  padding: 40px;
+  background: ${style.background};
 `;
 
 export default PostFormHeader;

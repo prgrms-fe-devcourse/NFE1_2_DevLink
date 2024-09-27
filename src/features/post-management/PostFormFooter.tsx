@@ -8,7 +8,7 @@ const PostFormFooter = () => {
     <OuterContainer>
       <InnerContainer>
         <Button>임시 저장</Button>
-        <Button>포스트 생성</Button>
+        <Button type="primary">포스트 생성</Button>
       </InnerContainer>
     </OuterContainer>
   );
@@ -21,15 +21,16 @@ const OuterContainer = styled.footer`
   height: ${style.bottom.height}px;
   align-items: center;
   justify-content: center;
-  background: green;
 `;
 
 const InnerContainer = styled.div`
   display: flex;
+  height: 100%;
   gap: 100px;
+  align-items: center;
   justify-content: center;
   width: ${style.container.width}px;
-  background: powderblue;
+  background: ${style.background};
 `;
 
 export default PostFormFooter;

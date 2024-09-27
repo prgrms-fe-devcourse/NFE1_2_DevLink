@@ -3,6 +3,7 @@ import { Layout } from "antd";
 
 import { PostFormFooter, PostFormHeader, PostFormMain } from "../features/post-management";
 import { PostProvider } from "../features/post-management/PostContext";
+import { config } from "../features/post-management/config";
 
 const { Sider, Content } = Layout;
 
@@ -33,6 +34,7 @@ const contentStyle: CSSProperties = {
   display: "flex",
   flexDirection: "column",
   height: "100vh",
+  background: config.style.outerBackground,
 };
 
 export default PostCreatePage;

@@ -1,8 +1,14 @@
+import { Typography } from "antd";
+
 import { PostInputChangeHandler } from "./type";
 
 interface CodeInputProps {
   onChange: PostInputChangeHandler<HTMLTextAreaElement>;
 }
+
+const config = {
+  label: "CODE SANDBOX",
+};
 
 /**
  * CodeInput 컴포넌트
@@ -12,7 +18,8 @@ interface CodeInputProps {
  */
 const CodeInput: React.FC<CodeInputProps> = ({ onChange }) => {
   return (
-    <div>
+    <div style={{ flex: 1 }}>
+      <Typography.Title level={3}>{config.label}</Typography.Title>
       <textarea name="" id="" onChange={onChange}></textarea>
     </div>
   );
