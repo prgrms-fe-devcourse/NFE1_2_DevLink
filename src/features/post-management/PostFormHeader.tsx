@@ -19,7 +19,7 @@ const OuterContainer = styled.header`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: ${style.bottom.height}px;
+  height: ${style.top.height}px;
   /* background: green; */
 `;
 
