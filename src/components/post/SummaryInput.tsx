@@ -1,4 +1,5 @@
 import { Input, Typography } from "antd";
+import { TitleProps } from "antd/es/typography/Title";
 
 import { PostInputChangeHandler } from "./type";
 
@@ -13,6 +14,7 @@ const config = {
     max: 25,
   },
   placeholder: "포스트 한줄 요약을 작성해 주세요!",
+  text: 5 as TitleProps["level"],
 };
 
 /**
@@ -24,7 +26,7 @@ const config = {
 const SummaryInput: React.FC<SummaryInputProps> = ({ onChange }) => {
   return (
     <div>
-      <Typography.Title level={3}>{config.label}</Typography.Title>
+      <Typography.Title level={config.text}>{config.label}</Typography.Title>
       <Input count={config.count} onChange={onChange} placeholder={config.placeholder} />
     </div>
   );

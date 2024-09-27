@@ -30,7 +30,12 @@ const InnerContainer = styled.div`
   justify-content: flex-end;
   width: ${style.container.width}px;
   padding: 40px;
+  border-radius: 6px 6px 0 0;
   background: ${style.background};
+
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
 `;
 
 export default PostFormHeader;

@@ -56,8 +56,12 @@ const InnerContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: ${style.container.width}px;
-  padding: 40px;
+  padding: 0 40px;
   background: ${style.background};
+
+  @media (max-width: 768px) {
+    padding: 0 10px;
+  }
 `;
 
 export default PostFormMain;

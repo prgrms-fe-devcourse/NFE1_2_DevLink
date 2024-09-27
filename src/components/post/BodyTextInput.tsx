@@ -1,7 +1,8 @@
+import { CSSProperties } from "react";
 import { Input, Typography } from "antd";
 
 import { PostInputChangeHandler } from "./type";
-import { CSSProperties } from "react";
+import { TitleProps } from "antd/es/typography/Title";
 
 interface CodeInputProps {
   onChange: PostInputChangeHandler<HTMLTextAreaElement>;
@@ -12,6 +13,7 @@ const config = {
   maxLength: 200,
   placeholder: "포스트 본문 내용을 작성해 주세요!",
   size: { height: 120, resize: "none" } as CSSProperties,
+  text: 5 as TitleProps["level"],
 };
 
 /**
@@ -23,7 +25,7 @@ const config = {
 const BodyTextInput: React.FC<CodeInputProps> = ({ onChange }) => {
   return (
     <div>
-      <Typography.Title level={3}>{config.label}</Typography.Title>
+      <Typography.Title level={config.text}>{config.label}</Typography.Title>
       <Input.TextArea
         showCount
         maxLength={config.maxLength}

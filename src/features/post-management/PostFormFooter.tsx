@@ -30,6 +30,7 @@ const InnerContainer = styled.div`
   align-items: center;
   justify-content: center;
   width: ${style.container.width}px;
+  border-radius: 0 0 6px 6px;
   background: ${style.background};
 `;
 
