@@ -1,8 +1,11 @@
+import styled from "styled-components";
+
 import { BodyTextInput, CodeInput, SummaryInput, TitleInput } from "../../components/post";
 import { usePost } from "../../hooks/usePost";
 import { hasValueProperty } from "../../utils/hasValueProperty";
 import { isSupportedPostAction } from "./isSupportedAction";
 import { PostActionType, PostFormHandler } from "./type";
+import { config } from "./config";
 
 /**
  * 제목
@@ -11,7 +14,7 @@ import { PostActionType, PostFormHandler } from "./type";
  * 한줄 요약
  *
  */
-const PostForm = () => {
+const PostFormMain = () => {
   const { dispatch } = usePost();
 
   // 사용자 입력 이벤트 처리
@@ -30,13 +33,31 @@ const PostForm = () => {
   };
 
   return (
-    <main>
-      <TitleInput onChange={handleChange(PostActionType.SET_TITLE)} />
-      <CodeInput onChange={handleChange(PostActionType.SET_CODE)} />
-      <BodyTextInput onChange={handleChange(PostActionType.SET_BODY)} />
-      <SummaryInput onChange={handleChange(PostActionType.SET_SUMMARY)} />
-    </main>
+    <OuterContainer>
+      <InnerContainer>
+        <TitleInput onChange={handleChange(PostActionType.SET_TITLE)} />
+        <CodeInput onChange={handleChange(PostActionType.SET_CODE)} />
+        <BodyTextInput onChange={handleChange(PostActionType.SET_BODY)} />
+        <SummaryInput onChange={handleChange(PostActionType.SET_SUMMARY)} />
+      </InnerContainer>
+    </OuterContainer>
   );
 };
 
-export default PostForm;
+const { style } = config;
+
+const OuterContainer = styled.main`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  background: blue;
+`;
+
+const InnerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: ${style.container.width}px;
+  background: pink;
+`;
+
+export default PostFormMain;
