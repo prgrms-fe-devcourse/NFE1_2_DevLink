@@ -8,8 +8,8 @@ interface UserData {
 
 // 로그인 페이지 스타일 지정
 const PageStyle = styled.div`
-  width: "1920px";
-  height: "1080px";
+  width: 1920px;
+  height: 1080px;
   display: flex;
   justify-content: center;
   align-items: center;
