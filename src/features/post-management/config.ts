@@ -1,7 +1,7 @@
 const config = {
   style: {
     container: {
-      width: 1100,
+      width: 850,
     },
     top: {
       height: 80,

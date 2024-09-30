@@ -32,11 +32,17 @@ const PostFormMain = () => {
     dispatch({ type, payload: target.value });
   };
 
+  const handleCodeChange = (type: PostActionType) => (code?: string) => {
+    if (type === PostActionType.SET_CODE && code !== undefined) {
+      dispatch({ type, payload: code });
+    }
+  };
+
   return (
     <OuterContainer>
       <InnerContainer>
         <TitleInput onChange={handleChange(PostActionType.SET_TITLE)} />
-        <CodeInput onChange={handleChange(PostActionType.SET_CODE)} />
+        <CodeInput onChange={handleCodeChange(PostActionType.SET_CODE)} />
         <BodyTextInput onChange={handleChange(PostActionType.SET_BODY)} />
         <SummaryInput onChange={handleChange(PostActionType.SET_SUMMARY)} />
       </InnerContainer>
