@@ -88,7 +88,7 @@ const CodeInput: React.FC<CodeInputProps> = ({ onChange, value, config = default
           {...config.code}
           onChange={onChange}
           onMount={onMountHandler}
-          defaultValue={value === "" ? config.code.defaultValue : value}
+          defaultValue={value || config.code.defaultValue}
         />
       </CodeSandBox>
     </Container>
