@@ -1,11 +1,12 @@
 import { Button } from "antd";
 import styled from "styled-components";
+import { useEffect, useState } from "react";
+import { SaveOutlined } from "@ant-design/icons";
 
 import { usePost } from "../../hooks/usePost";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import { PostActionType, PostState } from "./type";
 import { config, initialState } from "./config";
-import { useEffect } from "react";
 
 const PostFormFooter = () => {
   const { state, dispatch } = usePost();
@@ -23,13 +24,7 @@ const PostFormFooter = () => {
   return (
     <OuterContainer>
       <InnerContainer>
-        <Button
-          onClick={() => {
-            console.log(state);
-            setValue(state);
-          }}>
-          임시 저장
-        </Button>
+        <TemporaryStorageButton onClick={() => setValue(state)} />
         <Button
           type="primary"
           onClick={() => {
@@ -40,6 +35,32 @@ const PostFormFooter = () => {
         </Button>
       </InnerContainer>
     </OuterContainer>
+  );
+};
+
+const TemporaryStorageButton = ({ onClick }: { onClick: () => void }) => {
+  const [clickStatus, setClickStatus] = useState(false);
+
+  const label = {
+    default: "저장 하기",
+    success: "저장 완료",
+  };
+  const buttonText = clickStatus ? label.success : label.default;
+
+  const onClickHandler = () => {
+    const ms = 1500;
+
+    setClickStatus(true);
+    onClick();
+    setTimeout(() => {
+      setClickStatus(false);
+    }, ms);
+  };
+
+  return (
+    <Button onClick={onClickHandler} icon={<SaveOutlined />}>
+      {buttonText}
+    </Button>
   );
 };
 
