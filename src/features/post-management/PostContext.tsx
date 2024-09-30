@@ -1,12 +1,7 @@
 import { createContext, PropsWithChildren, useReducer } from "react";
-import { PostAction, PostActionType, PostContextProps, PostState } from "./type";
 
-const initialState: PostState = {
-  title: "",
-  code: "",
-  body: "",
-  summary: "",
-};
+import { PostAction, PostActionType, PostContextProps, PostState } from "./type";
+import { initialState } from "./config";
 
 const postReducer = (state: PostState, action: PostAction): PostState => {
   switch (action.type) {

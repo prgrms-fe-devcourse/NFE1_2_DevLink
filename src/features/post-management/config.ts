@@ -1,3 +1,5 @@
+import { PostState } from "./type";
+
 const config = {
   style: {
     container: {
@@ -14,4 +16,11 @@ const config = {
   },
 };
 
-export { config };
+const initialState: PostState = {
+  title: "",
+  code: "",
+  body: "",
+  summary: "",
+};
+
+export { config, initialState };

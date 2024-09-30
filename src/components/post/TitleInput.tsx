@@ -5,6 +5,7 @@ import { PostInputChangeHandler } from "./type";
 
 interface TitleInputProps {
   onChange: PostInputChangeHandler<HTMLInputElement>;
+  value: string;
 }
 
 const config = {
@@ -23,11 +24,16 @@ const config = {
  * 해당 컴포넌트는 포스트의 제목을 입력하기 위한 입력 폼입니다.
  * 사용자가 입력한 내용은 `onChange` 핸들러를 통해 상위 컴포넌트로 전달됩니다.
  */
-const TitleInput: React.FC<TitleInputProps> = ({ onChange }) => {
+const TitleInput: React.FC<TitleInputProps> = ({ onChange, value }) => {
   return (
     <div>
       <Typography.Title level={config.text}>{config.label}</Typography.Title>
-      <Input count={config.count} onChange={onChange} placeholder={config.placeholder} />
+      <Input
+        value={value}
+        count={config.count}
+        onChange={onChange}
+        placeholder={config.placeholder}
+      />
     </div>
   );
 };

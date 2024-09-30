@@ -19,6 +19,7 @@ type Config = {
 
 interface CodeInputProps {
   onChange: (code?: string) => void;
+  value: string;
   config?: Config;
 }
 
@@ -53,7 +54,7 @@ const defaultConfig = {
  * 해당 컴포넌트는 포스트의 코드를 입력하기 위한 입력 폼입니다.
  * 사용자가 입력한 본문 내용은 `onChange` 핸들러를 통해 상위 컴포넌트로 전달됩니다.
  */
-const CodeInput: React.FC<CodeInputProps> = ({ onChange, config = defaultConfig }) => {
+const CodeInput: React.FC<CodeInputProps> = ({ onChange, value, config = defaultConfig }) => {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
   const onMountHandler = handleEditorWillMount((editor) => {
@@ -83,7 +84,12 @@ const CodeInput: React.FC<CodeInputProps> = ({ onChange, config = defaultConfig 
       </Flex>
 
       <CodeSandBox>
-        <Editor onChange={onChange} onMount={onMountHandler} {...config.code} />
+        <Editor
+          {...config.code}
+          onChange={onChange}
+          onMount={onMountHandler}
+          defaultValue={value === "" ? config.code.defaultValue : value}
+        />
       </CodeSandBox>
     </Container>
   );

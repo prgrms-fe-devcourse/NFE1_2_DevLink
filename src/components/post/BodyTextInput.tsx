@@ -6,6 +6,7 @@ import { TitleProps } from "antd/es/typography/Title";
 
 interface CodeInputProps {
   onChange: PostInputChangeHandler<HTMLTextAreaElement>;
+  value: string;
 }
 
 const config = {
@@ -22,7 +23,7 @@ const config = {
  * 해당 컴포넌트는 포스트의 본문을 입력하기 위한 입력 폼입니다.
  * 사용자가 입력한 내용은 `onChange` 핸들러를 통해 상위 컴포넌트로 전달됩니다.
  */
-const BodyTextInput: React.FC<CodeInputProps> = ({ onChange }) => {
+const BodyTextInput: React.FC<CodeInputProps> = ({ onChange, value }) => {
   return (
     <div>
       <Typography.Title level={config.text}>{config.label}</Typography.Title>
@@ -32,6 +33,7 @@ const BodyTextInput: React.FC<CodeInputProps> = ({ onChange }) => {
         onChange={onChange}
         placeholder={config.placeholder}
         style={config.size}
+        value={value}
       />
     </div>
   );

@@ -7,15 +7,8 @@ import { isSupportedPostAction } from "./isSupportedAction";
 import { PostActionType, PostFormHandler } from "./type";
 import { config } from "./config";
 
-/**
- * 제목
- * 코드 입력
- * 본문 텍스트
- * 한줄 요약
- *
- */
 const PostFormMain = () => {
-  const { dispatch } = usePost();
+  const { dispatch, state } = usePost();
 
   // 사용자 입력 이벤트 처리
   const handleChange: PostFormHandler = (type) => (e) => {
@@ -41,10 +34,10 @@ const PostFormMain = () => {
   return (
     <OuterContainer>
       <InnerContainer>
-        <TitleInput onChange={handleChange(PostActionType.SET_TITLE)} />
-        <CodeInput onChange={handleCodeChange(PostActionType.SET_CODE)} />
-        <BodyTextInput onChange={handleChange(PostActionType.SET_BODY)} />
-        <SummaryInput onChange={handleChange(PostActionType.SET_SUMMARY)} />
+        <TitleInput onChange={handleChange(PostActionType.SET_TITLE)} value={state.title} />
+        <CodeInput onChange={handleCodeChange(PostActionType.SET_CODE)} value={state.code} />
+        <BodyTextInput onChange={handleChange(PostActionType.SET_BODY)} value={state.body} />
+        <SummaryInput onChange={handleChange(PostActionType.SET_SUMMARY)} value={state.summary} />
       </InnerContainer>
     </OuterContainer>
   );
