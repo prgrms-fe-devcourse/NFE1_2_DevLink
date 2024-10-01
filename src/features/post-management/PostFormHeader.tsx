@@ -2,12 +2,29 @@ import { Button } from "antd";
 import styled from "styled-components";
 
 import { config } from "./config";
+import { usePost } from "../../hooks/usePost";
+import { PostActionType } from "./type";
+import { toggleState } from "../../utils/toggleState";
 
 const PostFormHeader = () => {
+  const {
+    dispatch,
+    state: { status },
+  } = usePost();
+
+  const onClickStatusHandler = () => {
+    dispatch({
+      type: PostActionType.SET_STATUS,
+      payload: toggleState(status, "create", "preview"),
+    });
+  };
+
+  const label = status === "create" ? "포스트 미리보기" : "미리보기 종료";
+
   return (
     <OuterContainer>
       <InnerContainer>
-        <Button>포스트 미리보기</Button>
+        <Button onClick={onClickStatusHandler}>{label}</Button>
       </InnerContainer>
     </OuterContainer>
   );

@@ -5,12 +5,12 @@ import { SaveOutlined } from "@ant-design/icons";
 
 import { usePost } from "../../hooks/usePost";
 import useLocalStorage from "../../hooks/useLocalStorage";
-import { PostActionType, PostState } from "./type";
-import { config, initialState } from "./config";
+import { PostActionType, PostPayload } from "./type";
+import { config, initialPostPayload } from "./config";
 
 const PostFormFooter = () => {
   const { state, dispatch } = usePost();
-  const [storedValue, setValue] = useLocalStorage<PostState>("post-form", initialState);
+  const [storedValue, setValue] = useLocalStorage<PostPayload>("post-form", initialPostPayload);
 
   const isSaved = Object.values(storedValue).some((value) => value !== "");
 
@@ -21,15 +21,19 @@ const PostFormFooter = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    console.log(state);
+  }, [state]);
+
   return (
     <OuterContainer>
       <InnerContainer>
-        <TemporaryStorageButton onClick={() => setValue(state)} />
+        <TemporaryStorageButton onClick={() => setValue(state.payload)} />
         <Button
           type="primary"
           onClick={() => {
             console.log(state);
-            setValue(initialState);
+            setValue(initialPostPayload);
           }}>
           포스트 생성
         </Button>

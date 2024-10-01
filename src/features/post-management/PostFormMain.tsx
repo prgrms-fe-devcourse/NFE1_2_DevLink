@@ -8,14 +8,17 @@ import { PostActionType, PostFormHandler } from "./type";
 import { config } from "./config";
 
 const PostFormMain = () => {
-  const { dispatch, state } = usePost();
+  const {
+    dispatch,
+    state: { payload },
+  } = usePost();
 
   // 사용자 입력 이벤트 처리
   const handleChange: PostFormHandler = (type) => (e) => {
     const { target } = e;
 
     if (!isSupportedPostAction(type)) {
-      throw new Error("SET_ALL or RESET cannot be handled by handleChange.");
+      throw new Error(`${type} cannot be handled by handleChange.`);
     }
 
     if (!hasValueProperty<HTMLInputElement | HTMLTextAreaElement>(target)) {
@@ -34,10 +37,10 @@ const PostFormMain = () => {
   return (
     <OuterContainer>
       <InnerContainer>
-        <TitleInput onChange={handleChange(PostActionType.SET_TITLE)} value={state.title} />
-        <CodeInput onChange={handleCodeChange(PostActionType.SET_CODE)} value={state.code} />
-        <BodyTextInput onChange={handleChange(PostActionType.SET_BODY)} value={state.body} />
-        <SummaryInput onChange={handleChange(PostActionType.SET_SUMMARY)} value={state.summary} />
+        <TitleInput onChange={handleChange(PostActionType.SET_TITLE)} value={payload.title} />
+        <CodeInput onChange={handleCodeChange(PostActionType.SET_CODE)} value={payload.code} />
+        <BodyTextInput onChange={handleChange(PostActionType.SET_BODY)} value={payload.body} />
+        <SummaryInput onChange={handleChange(PostActionType.SET_SUMMARY)} value={payload.summary} />
       </InnerContainer>
     </OuterContainer>
   );

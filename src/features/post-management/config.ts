@@ -16,11 +16,16 @@ const config = {
   },
 };
 
-const initialState: PostState = {
+const initialPostPayload = {
   title: "",
   code: "",
   body: "",
   summary: "",
 };
 
-export { config, initialState };
+const initialPostState: PostState = {
+  payload: initialPostPayload,
+  status: "create",
+};
+
+export { config, initialPostState, initialPostPayload };
