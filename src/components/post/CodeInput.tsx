@@ -23,6 +23,9 @@ interface CodeInputProps {
   config?: Config;
 }
 
+export const defaultCode =
+  "const Component = () => {\n  return (\n    <div style={styles}>\n      <h1>Hello World</h1>\n    </div>\n  );\n};\n\nconst styles = {};\n";
+
 const defaultConfig = {
   text: {
     fontLevel: 5 as TitleProps["level"],
@@ -42,8 +45,7 @@ const defaultConfig = {
       fontSize: 14,
     },
     path: "Component.tsx",
-    defaultValue:
-      "const Component = () => {\n  return (\n    <div style={styles}>\n      <h1>Hello World</h1>\n    </div>\n  );\n};\n\nconst styles = {};\n",
+    defaultValue: defaultCode,
     loading: <Typography.Text type="warning">에디터 준비중...</Typography.Text>,
   } as EditorProps,
 };

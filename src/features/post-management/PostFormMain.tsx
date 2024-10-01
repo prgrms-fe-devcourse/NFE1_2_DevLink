@@ -14,7 +14,7 @@ const PostFormMain = () => {
       return <PostFormInput context={postContext} />;
     }
 
-    return <PostPreview />;
+    return <PostPreview data={postContext.state.payload} />;
   };
 
   return <ContentContainer>{renderFormComponent()}</ContentContainer>;
