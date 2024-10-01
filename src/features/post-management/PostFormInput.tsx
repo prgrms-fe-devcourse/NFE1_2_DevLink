@@ -1,15 +1,24 @@
+import React from "react";
+
 import { BodyTextInput, CodeInput, SummaryInput, TitleInput } from "../../components/post";
 import { hasValueProperty } from "../../utils/hasValueProperty";
 import { isSupportedPostAction } from "./isSupportedAction";
-import { PostAction, PostActionType, PostFormHandler, PostPayload } from "./type";
-import React from "react";
+import { PostActionType, PostContextProps, PostFormHandler } from "./type";
 
 interface PostFormMainProps {
-  data: PostPayload;
-  dispatch: React.Dispatch<PostAction>;
+  context: PostContextProps;
 }
 
-const PostFormInput: React.FC<PostFormMainProps> = ({ data, dispatch }) => {
+const PostFormInput: React.FC<PostFormMainProps> = ({ context }) => {
+  if (!context) {
+    throw new Error("A valid context must exist");
+  }
+
+  const {
+    dispatch,
+    state: { payload },
+  } = context;
+
   // 사용자 입력 이벤트 처리
   const handleChange: PostFormHandler = (type) => (e) => {
     const { target } = e;
@@ -33,10 +42,10 @@ const PostFormInput: React.FC<PostFormMainProps> = ({ data, dispatch }) => {
 
   return (
     <>
-      <TitleInput onChange={handleChange(PostActionType.SET_TITLE)} value={data.title} />
-      <CodeInput onChange={handleCodeChange(PostActionType.SET_CODE)} value={data.code} />
-      <BodyTextInput onChange={handleChange(PostActionType.SET_BODY)} value={data.body} />
-      <SummaryInput onChange={handleChange(PostActionType.SET_SUMMARY)} value={data.summary} />
+      <TitleInput onChange={handleChange(PostActionType.SET_TITLE)} value={payload.title} />
+      <CodeInput onChange={handleCodeChange(PostActionType.SET_CODE)} value={payload.code} />
+      <BodyTextInput onChange={handleChange(PostActionType.SET_BODY)} value={payload.body} />
+      <SummaryInput onChange={handleChange(PostActionType.SET_SUMMARY)} value={payload.summary} />
     </>
   );
 };

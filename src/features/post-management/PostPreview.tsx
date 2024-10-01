@@ -1,5 +1,14 @@
+import styled from "styled-components";
+
 const PostPreview = () => {
-  return <div>PostPreview</div>;
+  return <Container>PostPreview</Container>;
 };
+
+const Container = styled.main`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  background-color: pink;
+`;
 
 export default PostPreview;

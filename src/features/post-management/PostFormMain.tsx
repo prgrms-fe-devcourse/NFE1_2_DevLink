@@ -1,3 +1,4 @@
+import { PropsWithChildren } from "react";
 import styled from "styled-components";
 
 import PostFormInput from "./PostFormInput";
@@ -6,17 +7,23 @@ import { config } from "./config";
 import { usePost } from "../../hooks/usePost";
 
 const PostFormMain = () => {
-  const {
-    dispatch,
-    state: { payload, status },
-  } = usePost();
+  const postContext = usePost();
 
-  const Component =
-    status === "create" ? <PostFormInput data={payload} dispatch={dispatch} /> : <PostPreview />;
+  const renderFormComponent = () => {
+    if (postContext.state.status === "create") {
+      return <PostFormInput context={postContext} />;
+    }
 
+    return <PostPreview />;
+  };
+
+  return <ContentContainer>{renderFormComponent()}</ContentContainer>;
+};
+
+const ContentContainer: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <OuterContainer>
-      <InnerContainer>{Component}</InnerContainer>
+      <InnerContainer>{children}</InnerContainer>
     </OuterContainer>
   );
 };
