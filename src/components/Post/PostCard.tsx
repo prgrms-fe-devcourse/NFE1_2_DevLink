@@ -22,7 +22,7 @@ interface Post {
 
 // PostCardProps 타입 정의
 interface PostCardProps {
-  channelId: string;
+  postId: string;
 }
 
 // Styled Components
@@ -80,22 +80,18 @@ const PostSummary = styled.p`
   margin-top: 25px;
 `;
 
-const PostCard: React.FC<PostCardProps> = ({ channelId }) => {
+const PostCard: React.FC<PostCardProps> = ({ postId }) => {
   const [post, setPost] = useState<Post | null>(null); // 하나의 포스트를 가져옴
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchPost = async () => {
     try {
       const response = await fetch(
-        `https://kdt.frontend.5th.programmers.co.kr:5004/posts/66778ce2418f192f946d0ca6`
+        `https://kdt.frontend.5th.programmers.co.kr:5004/posts/${postId}`
       );
-      const data = await response.json();
 
-      if (Array.isArray(data)) {
-        setPost(data[0]); // 배열이면 첫 번째 포스트 가져오기
-      } else {
-        setPost(data); // 단일 객체일 경우 그대로 설정
-      }
+      const data = await response.json();
+      setPost(data); // 응답이 단일 객체이므로 그대로 설정
     } catch (error) {
       console.error("Failed to fetch post", error);
     } finally {
@@ -105,7 +101,7 @@ const PostCard: React.FC<PostCardProps> = ({ channelId }) => {
 
   useEffect(() => {
     fetchPost();
-  }, [channelId]);
+  }, [postId]);
 
   if (loading) {
     return <div>로딩중임 !!!</div>;
@@ -124,7 +120,7 @@ const PostCard: React.FC<PostCardProps> = ({ channelId }) => {
       <PostInfo>
         <FirstLine>
           <PostTitle>
-            {post.title.length > 15 ? post.title.substring(0, 15) + "..." : post.title}
+            {post.title.length > 20 ? post.title.substring(0, 20) + "..." : post.title}
           </PostTitle>
           <LikeButton postId={post._id} initialLikeCount={post.likes.length} />
         </FirstLine>
