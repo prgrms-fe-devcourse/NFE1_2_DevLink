@@ -1,58 +1,211 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { Input, Button } from "antd";
 
-// 로그인 박스 스타일 지정
-const BoxStyle = styled.div`
-  width: 500px;
-  height: 600px;
-  padding: 30px;
-`;
-
+//UserData 정의
 interface UserData {
   email: string;
   password: string;
 }
 
-const LoginBox = (props: { userData: UserData }) => {
-  const { userData } = props;
+//props 정의
+interface PropsData {
+  userData: UserData;
+}
+
+// 로그인 박스 스타일 지정
+const BoxStyle = styled.div`
+  width: 500px;
+  height: 600px;
+  background-color: #ffffff;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border: 1px solid #efefef; // 확인용
+
+  form {
+    width: 100%;
+  }
+`;
+
+// styled component : 로고
+const LogoStyle = styled.img`
+  width: 250px;
+  height: 50px;
+  margin-bottom: 50px;
+`;
+
+// styled component : 입력창
+const InputStyle = styled(Input)`
+  padding: 15px;
+`;
+
+// styled component : ErrorMessage
+const ErrorMessage = styled.div`
+  color: red;
+  margin: 5px 0;
+  height: 37px;
+  overflow: hidden;
+  min-height: 20px;
+  font-size: 15px;
+`;
+
+// styled component : 로그인 버튼
+const LoginButton = styled(Button)`
+  padding: 23px;
+`;
+
+// styled component : 회원가입 버튼
+const SignUpButton = styled(Button)``;
+
+// styled component : OR 텍스트 부분
+const OrDiv = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 1.5rem;
+  justify-content: center;
+`;
+
+const OrLine = styled.div`
+  border-bottom: 1px solid #d9d9d9;
+  width: 100%;
+`;
+
+const OrText = styled.div`
+  margin: 0 10px;
+  font-weight: bold;
+  font-size: small;
+  color: #959595;
+`;
+
+// styled component : 카카오 로그인 버튼
+const KakaoButton = styled.button`
+  background-color: #fee500;
+  color: #000;
+  border-radius: 12px;
+  padding: 10px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 2rem;
+
+  &:hover {
+    background-color: #fee50088;
+  }
+
+  // 심볼 아이콘
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-image: url("src/assets/images/logo_kakao.png");
+    background-size: cover;
+    margin-right: 12px;
+  }
+`;
+
+const LoginBox = ({ userData }: PropsData) => {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState(userData.email);
-  const [password, setPassword] = useState(userData.password);
+  // 입력 값 상태관리
+  const [formData, setFormData] = useState<UserData>({ ...userData });
 
+  // 에러 메시지
+  const [emailMessage, setEmailMessage] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState("");
+
+  // 입력값 변경시 이벤트 핸들러
+  const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 입력값 유효성 검증
+    const { name, value } = e.target;
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[^\s]{8,16}$/;
+
+    if (name === "email") {
+      if (!emailRegex.test(value)) {
+        setEmailMessage("* 이메일 형식이 잘못되었거나 공백을 포함할 수 없습니다.");
+      } else {
+        setEmailMessage("");
+      }
+    }
+
+    if (name === "password") {
+      if (!passwordRegex.test(value)) {
+        setPasswordMessage(
+          "* 비밀번호는 영문, 특수문자, 숫자를 포함한 8~16자여야 하며, 공백을 포함할 수 없습니다."
+        );
+      } else {
+        setPasswordMessage("");
+      }
+    }
+  };
+
+  // 로그인 버튼 클릭시 이벤트 핸들러
   const loginHandler = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!emailMessage && !passwordMessage && formData.email && formData.password) {
+      try {
+        const response = await fetch("https://kdt.frontend.5th.programmers.co.kr:5004/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          console.log("로그인 성공", data);
+          navigate("/");
+        } else {
+          const errorData = await response.json();
+          console.log("로그인 실패", errorData);
+        }
+      } catch (error) {
+        console.error("API 호출 중 오류 발생, 다시 시도하세요.");
+      }
+    }
   };
 
   return (
-    <div>
-      <img src="src\assets\images\logo.png" alt="로고 이미지" />
-      <form action="#" onClick={loginHandler}>
-        <input
-          type="email"
-          name="email"
-          defaultValue={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
-          placeholder="Email"
-        />
-        <input
+    <BoxStyle>
+      <LogoStyle src="src\assets\images\logo.png" alt="로고 이미지" />
+      <form action="#" onSubmit={loginHandler}>
+        <InputStyle type="email" name="email" placeholder="Email" onChange={changeHandler} />
+        <ErrorMessage>{emailMessage}</ErrorMessage>
+        <InputStyle
           type="password"
           name="password"
-          defaultValue={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
           placeholder="Password"
+          onChange={changeHandler}
         />
-        <button type="submit">로그인</button>
-        <div>OR</div>
-        <button onClick={() => navigate("/signin/kakao")}>카카오 로그인</button>
+        <ErrorMessage>{passwordMessage}</ErrorMessage>
+        <LoginButton type="primary" htmlType="submit" block>
+          로그인
+        </LoginButton>
+        <OrDiv>
+          <OrLine></OrLine>
+          <OrText>OR</OrText>
+          <OrLine></OrLine>
+        </OrDiv>
+        <KakaoButton type="button">카카오로 로그인</KakaoButton>
       </form>
-      <span>계정이 없으신가요?</span> <button onClick={() => navigate("/signup")}>회원 가입</button>
-    </div>
+      <div>
+        계정이 없으신가요?
+        <SignUpButton type="link" onClick={() => navigate("/signup")}>
+          회원 가입
+        </SignUpButton>
+      </div>{" "}
+    </BoxStyle>
   );
 };
 

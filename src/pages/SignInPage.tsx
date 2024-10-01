@@ -8,13 +8,13 @@ interface UserData {
 
 // 로그인 페이지 스타일 지정
 const PageStyle = styled.div`
-  width: "1920px";
-  height: "1080px";
+  width: 1920px;
+  height: 1080px;
+  background-color: #f9f9f9;
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 0 auto;
-  border: 1px solid black; // 확인용
 `;
 
 const userData: UserData = {
