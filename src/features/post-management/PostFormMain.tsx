@@ -54,7 +54,8 @@ const OuterContainer = styled.main`
 const InnerContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: ${style.container.width}px;
+  width: 100%;
+  max-width: ${style.container.width}px;
   padding: 0 40px;
   background: ${style.background};
 
