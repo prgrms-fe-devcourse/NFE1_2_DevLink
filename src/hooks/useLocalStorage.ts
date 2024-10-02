@@ -16,11 +16,9 @@ const useLocalStorage = <T>(key: string, initialValue: T) => {
   const storageManager = useRef(createLocalStorageManager<T>(key));
   const [storedValue, setStoredValue] = useState<T>(() => {
     const item = storageManager.current.getItem();
-    console.log(item);
     // 초기값 타입이 다른 경우, 전달된 초기값을 저장하고 반환.
     if (!item || !validators.isSameType(item, initialValue)) {
       storageManager.current.setItem(initialValue, initialValue);
-      console.log("실행됨 여기");
       return initialValue;
     }
 
