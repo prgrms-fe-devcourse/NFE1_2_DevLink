@@ -22,7 +22,7 @@ const LogoImg = styled.img`
   width: 200px;
   cursor: pointer;
   &:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
     transition-duration: 0.3s;
   }
 `;
@@ -53,9 +53,9 @@ const HeaderButtons = styled.div`
     flex-direction: row;
     margin-right: 20px;
     cursor: pointer;
-    label {
+    div {
       &:hover {
-        transform: scale(1.1);
+        transform: scale(1.05);
         transition-duration: 0.3s;
       }
     }
@@ -63,13 +63,36 @@ const HeaderButtons = styled.div`
 `;
 
 const Header = () => {
-  // test : 로그인 or 비로그인 상황에 따라 다른 컴포넌트 적용 ‼️‼️삭제 예정‼️‼️  ‼️‼️삭제 예정‼️‼️
-  const [islogin, setIslogin] = useState(false);
-  const [username, setUsername] = useState("유저이름(수정필요)");
+  // 더미 데이터 : 삭제 예정 (테스트 전용 변수)
+  const [islogin, setIslogin] = useState(true);
+  const [username, setUsername] = useState("유저이름(수정필요)"); // user.fullName으로 변경 요망
+  const [localStorageToken, SetLocalStorageToken] = useState(
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY2ZmEwODNlZGNkM2Y1NzM1M2EyYTExZiIsImVtYWlsIjoiYWFhQG5hdmVyLmNvbSJ9LCJpYXQiOjE3Mjc4MzcwMzF9.adV1I6cBqAIknVEyb08hDvSasDVcEPPdfp84qr4vNJ0"
+  );
   // ‼️‼️삭제 예정‼️‼️  ‼️‼️삭제 예정‼️‼️  ‼️‼️삭제 예정‼️‼️  ‼️‼️삭제 예정‼️‼️  ‼️‼️삭제 예정‼️‼️
 
   // 상단 내비게이션 : 클릭 시 해당 주소로 이동
   const navigate = useNavigate();
+
+  // 로그아웃 버튼 클릭 시 로그아웃 API 요청 - 수정 중
+  const onClickSignout = async () => {
+    try {
+      const response = await fetch("https://kdt.frontend.5th.programmers.co.kr:5004/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // JSON 형식임을 명시
+          Authorization: `bearer ${localStorageToken}`,
+        },
+      });
+      // if (response.ok) {
+      //   window.localStorage.removeItem(localStorageToken); // 로컬 스토리지 내에 저장된 토큰을 삭제한다. - 추후 수정 예정
+      //   alert("로그아웃 되었습니다");
+      // }
+      console.log(response);
+    } catch (error) {
+      console.error("로그아웃 실패:", error);
+    }
+  };
   return (
     <HeaderBackground>
       <LogoImg onClick={() => navigate("/")} src={devlinkLogo} alt="devlink-logo" />
@@ -78,6 +101,7 @@ const Header = () => {
           <label
             onClick={() => {
               setIslogin(!islogin);
+              onClickSignout();
             }}>
             <img src={signoutIcon} alt="signout-icon" id="signout" /> <div>로그아웃</div>
           </label>
@@ -96,14 +120,14 @@ const Header = () => {
               navigate("/signup");
             }}>
             <img src={signupIcon} alt="signup-icon" />
-            <label>회원가입</label>
+            <div>회원가입</div>
           </label>
           <label
             onClick={() => {
               navigate("/signin");
             }}>
             <img src={signinIcon} alt="signin-icon" />
-            <label>로그인</label>
+            <div>로그인</div>
           </label>
         </HeaderButtons>
       )}

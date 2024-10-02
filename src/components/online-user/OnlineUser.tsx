@@ -78,7 +78,7 @@ const OnlineUser = () => {
       }
     };
     fetchOnlineUser();
-  }, []);
+  }, [onlineUserList]);
 
   return (
     <OnlineUserContainer>
