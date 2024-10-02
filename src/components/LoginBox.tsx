@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Input, Button } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { LOGIN } from "../features/redux/store";
+
+// store의 isLogin 값에 접근
+const selectIsLogin = (state: any) => state.user.isLogin;
 
 //UserData 정의
 interface UserData {
@@ -114,6 +119,8 @@ const KakaoButton = styled.button`
 
 const LoginBox = ({ userData }: PropsData) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [successMsg, setSuccessMsg] = useState("");
 
   // 입력 값 상태관리
   const [formData, setFormData] = useState<UserData>({ ...userData });
@@ -165,13 +172,16 @@ const LoginBox = ({ userData }: PropsData) => {
         if (response.ok) {
           const data = await response.json();
           console.log("로그인 성공", data);
+          dispatch({ type: LOGIN });
           navigate("/");
         } else {
           const errorData = await response.json();
           console.log("로그인 실패", errorData);
+          alert("로그인에 실패했습니다. 이메일과 비밀번호를 정확히 입력해 주세요");
         }
       } catch (error) {
         console.error("API 호출 중 오류 발생, 다시 시도하세요.");
+        alert("로그인에 실패했습니다. 이메일과 비밀번호를 정확히 입력해주세요");
       }
     }
   };
@@ -205,6 +215,7 @@ const LoginBox = ({ userData }: PropsData) => {
           회원 가입
         </SignUpButton>
       </div>{" "}
+      {successMsg && <p>{successMsg}</p>}
     </BoxStyle>
   );
 };
