@@ -17,10 +17,10 @@ const config = {
 };
 
 const initialPostPayload = {
-  title: "",
+  title: "포스트 제목을 작성해 주세요!",
   code: "",
-  body: "",
-  summary: "",
+  body: "포스트 한줄 요약을 작성해 주세요!",
+  summary: "포스트 한줄 요약을 작성해 주세요!",
 };
 
 const initialPostState: PostState = {
@@ -28,4 +28,20 @@ const initialPostState: PostState = {
   status: "create",
 };
 
-export { config, initialPostState, initialPostPayload };
+const defaultCode = `const Component = () => {
+  return (
+    <div style={styles}>
+      <h1>Hello World</h1>
+    </div>
+  );
+};
+
+const styles = {
+  backgroundColor: "lightblue",
+  padding: "20px",
+  borderRadius: "5px",
+  textAlign: "center",
+};
+`;
+
+export { config, initialPostState, initialPostPayload, defaultCode };
