@@ -20,6 +20,11 @@ const HeaderBackground = styled.div`
 const LogoImg = styled.img`
   margin-left: 10px;
   width: 200px;
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.1);
+    transition-duration: 0.3s;
+  }
 `;
 
 const HeaderButtons = styled.div`
@@ -27,7 +32,7 @@ const HeaderButtons = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: right;
-  width: 300px;
+  min-width: 300px;
   height: 40px;
   margin: auto;
   margin-right: 10px;
@@ -38,17 +43,28 @@ const HeaderButtons = styled.div`
     align-items: center;
     justify-content: center;
     margin-right: 10px;
+    &:hover {
+      transform: scale(1.1);
+      transition-duration: 0.3s;
+    }
   }
   label {
     display: flex;
     flex-direction: row;
     margin-right: 20px;
+    cursor: pointer;
+    label {
+      &:hover {
+        transform: scale(1.1);
+        transition-duration: 0.3s;
+      }
+    }
   }
 `;
 
 const Header = () => {
   // test : 로그인 or 비로그인 상황에 따라 다른 컴포넌트 적용 ‼️‼️삭제 예정‼️‼️  ‼️‼️삭제 예정‼️‼️
-  const [islogin, setIslogin] = useState(true);
+  const [islogin, setIslogin] = useState(false);
   const [username, setUsername] = useState("유저이름(수정필요)");
   // ‼️‼️삭제 예정‼️‼️  ‼️‼️삭제 예정‼️‼️  ‼️‼️삭제 예정‼️‼️  ‼️‼️삭제 예정‼️‼️  ‼️‼️삭제 예정‼️‼️
 
