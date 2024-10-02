@@ -83,7 +83,7 @@ const CodeRender: React.FC<CodeRenderProps> = ({ data, config = defaultConfig })
   const { color, parse } = config.error;
 
   return (
-    <CodeRenderContainer ref={containerRef} isScrollable={isScrollable}>
+    <CodeRenderContainer ref={containerRef} $scrollable={isScrollable}>
       {isError ? (
         <CodeRenderError reason={{ error: parse }} color={color} />
       ) : (
@@ -156,10 +156,10 @@ const config = {
   },
 };
 
-const CodeRenderContainer = styled.div<{ isScrollable: boolean }>`
+const CodeRenderContainer = styled.div<{ $scrollable?: boolean }>`
   flex: 1;
   display: flex;
-  justify-content: ${({ isScrollable }) => (isScrollable ? "flex-start" : "center")};
+  justify-content: ${(props) => (props.$scrollable ? "flex-start" : "center")};
   align-items: center;
   overflow-x: scroll;
   min-height: ${config.style.minHeight}px;
