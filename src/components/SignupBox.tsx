@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Input, Button } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { LOGIN } from "../features/redux/store";
 
 //UserData 정의
 interface UserData {
@@ -19,12 +21,13 @@ interface PropsData {
 const BoxStyle = styled.div`
   width: 500px;
   height: 600px;
+  background-color: #ffffff;
   padding: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  border: 1px solid black; // 확인용
+  border: 1px solid #efefef; // 확인용
 
   form {
     width: 100%;
@@ -64,6 +67,7 @@ const ErrorMessage = styled.div`
 
 const SignupBox = ({ userData }: PropsData) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // 입력 값 상태관리
   const [formData, setFormData] = useState<UserData>({ ...userData });
@@ -79,24 +83,30 @@ const SignupBox = ({ userData }: PropsData) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const fullNameRegex = /^[^\s]{1,8}$/;
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[^\s]{8,16}$/;
+
     if (name === "email") {
-      if (!value || value.includes(" ")) {
-        setEmailMessage("* 이메일은 공백을 포함할 수 없습니다.");
+      if (!emailRegex.test(value)) {
+        setEmailMessage(" * 이메일 형식이 잘못되었거나 공백을 포함할 수 없습니다.");
       } else {
         setEmailMessage("");
       }
     }
+
     if (name === "fullName") {
-      if (!value || value.includes(" ") || value.length > 8) {
-        setFullNameMessage("* 이름은 8자 이하여야 하고, 공백을 포함할 수 없습니다.");
+      if (!fullNameRegex.test(value)) {
+        setFullNameMessage(" * 이름은 8자 이하여야 하고, 공백을 포함할 수 없습니다.");
       } else {
         setFullNameMessage("");
       }
     }
+
     if (name === "password") {
-      if (!value || value.includes(" ") || 8 > value.length || value.length > 16) {
+      if (!passwordRegex.test(value)) {
         setPasswordMessage(
-          "* 비밀번호는 공백을 포함할 수 없으며 영문, 특수문자, 숫자를 포함한 8~16자여야 합니다."
+          " * 비밀번호는 영문, 특수문자, 숫자를 포함한 8~16자여야 하며, 공백을 포함할 수 없습니다."
         );
       } else {
         setPasswordMessage("");
@@ -107,7 +117,14 @@ const SignupBox = ({ userData }: PropsData) => {
   // 회원가입 버튼 클릭 시 이벤트 핸들러
   const signUpHandler = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!emailMessage && !fullNameMessage && !passwordMessage) {
+    if (
+      !emailMessage &&
+      !fullNameMessage &&
+      !passwordMessage &&
+      formData.email &&
+      formData.fullName &&
+      formData.password
+    ) {
       try {
         const response = await fetch("https://kdt.frontend.5th.programmers.co.kr:5004/signup", {
           method: "POST",
@@ -119,20 +136,23 @@ const SignupBox = ({ userData }: PropsData) => {
         if (response.ok) {
           const data = await response.json();
           console.log("로그인 성공", data);
+          dispatch({ type: LOGIN });
           navigate("/");
         } else {
           const errorData = await response.json();
           console.log("회원가입 실패", errorData);
+          alert("회원가입에 실패했습니다. 이메일과 이름, 비밀번호를 정확히 입력해 주세요.");
         }
       } catch (error) {
         console.error("API 호출 중 오류 발생", error);
+        alert("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
       }
     }
   };
 
   return (
     <BoxStyle>
-      <LogoStyle src="src/assets/images/logo.png" alt="로고 이미지" />
+      <LogoStyle src="src/assets/images/logo.png" alt="로고 이미지" onClick={() => navigate("/")} />
       <form action="#" onSubmit={signUpHandler}>
         <InputStyle type="email" name="email" placeholder="Email" onChange={changeHandler} />
         <ErrorMessage>{emailMessage}</ErrorMessage>

@@ -5,8 +5,8 @@ import { Input, Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { LOGIN } from "../features/redux/store";
 
-// store의 isLogin 값에 접근
-const selectIsLogin = (state: any) => state.user.isLogin;
+// // store의 isLogin 값에 접근
+// const selectIsLogin = (state: any) => state.user.isLogin;
 
 //UserData 정의
 interface UserData {
@@ -29,7 +29,7 @@ const BoxStyle = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  border: 1px solid #efefef; // 확인용
+  border: 1px solid #efefef;
 
   form {
     width: 100%;
@@ -48,7 +48,7 @@ const InputStyle = styled(Input)`
   padding: 15px;
 `;
 
-// styled component : ErrorMessage
+// styled component : 에러 메시지
 const ErrorMessage = styled.div`
   color: red;
   margin: 5px 0;
@@ -120,7 +120,6 @@ const KakaoButton = styled.button`
 const LoginBox = ({ userData }: PropsData) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [successMsg, setSuccessMsg] = useState("");
 
   // 입력 값 상태관리
   const [formData, setFormData] = useState<UserData>({ ...userData });
@@ -140,7 +139,7 @@ const LoginBox = ({ userData }: PropsData) => {
 
     if (name === "email") {
       if (!emailRegex.test(value)) {
-        setEmailMessage("* 이메일 형식이 잘못되었거나 공백을 포함할 수 없습니다.");
+        setEmailMessage(" * 이메일 형식이 잘못되었거나 공백을 포함할 수 없습니다.");
       } else {
         setEmailMessage("");
       }
@@ -149,7 +148,7 @@ const LoginBox = ({ userData }: PropsData) => {
     if (name === "password") {
       if (!passwordRegex.test(value)) {
         setPasswordMessage(
-          "* 비밀번호는 영문, 특수문자, 숫자를 포함한 8~16자여야 하며, 공백을 포함할 수 없습니다."
+          " * 비밀번호는 영문, 특수문자, 숫자를 포함한 8~16자여야 하며, 공백을 포함할 수 없습니다."
         );
       } else {
         setPasswordMessage("");
@@ -177,18 +176,18 @@ const LoginBox = ({ userData }: PropsData) => {
         } else {
           const errorData = await response.json();
           console.log("로그인 실패", errorData);
-          alert("로그인에 실패했습니다. 이메일과 비밀번호를 정확히 입력해 주세요");
+          alert("로그인에 실패했습니다. 이메일과 비밀번호를 정확히 입력해 주세요.");
         }
       } catch (error) {
-        console.error("API 호출 중 오류 발생, 다시 시도하세요.");
-        alert("로그인에 실패했습니다. 이메일과 비밀번호를 정확히 입력해주세요");
+        console.error("API 호출 중 오류 발생", error);
+        alert("로그인 중 오류가 발생했습니다. 다시 시도해주세요.");
       }
     }
   };
 
   return (
     <BoxStyle>
-      <LogoStyle src="src\assets\images\logo.png" alt="로고 이미지" />
+      <LogoStyle src="src\assets\images\logo.png" alt="로고 이미지" onClick={() => navigate("/")} />
       <form action="#" onSubmit={loginHandler}>
         <InputStyle type="email" name="email" placeholder="Email" onChange={changeHandler} />
         <ErrorMessage>{emailMessage}</ErrorMessage>
@@ -215,7 +214,6 @@ const LoginBox = ({ userData }: PropsData) => {
           회원 가입
         </SignUpButton>
       </div>{" "}
-      {successMsg && <p>{successMsg}</p>}
     </BoxStyle>
   );
 };
