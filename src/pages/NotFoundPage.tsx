@@ -1,27 +1,34 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
-// 404 이미지 스타일 지정
-const ImageStyle = styled.img`
-  /* width: 1055px;
-  height: 645px; */
-`;
+import { Button, Result } from "antd";
 
 const PageStyle = styled.div`
+  width: 1055px;
+  height: 645px;
   display: flex;
-  margin-top: 30px;
+  justify-content: center;
+  align-items: center;
+  margin: 30px auto 0;
+  border: 1px solid #efefef;
 `;
 
 const NotFoundPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div>
-      {/* 이미지 변경 예정 */}
-      <ImageStyle src="src\assets\images\logo.png" alt="404 이미지" />
-      <button onClick={() => navigate("/")}>메인페이지로 이동</button>
-    </div>
+    <PageStyle>
+      <Result
+        status="404"
+        title="Page Not Found"
+        subTitle="죄송합니다. 페이지를 찾을 수 없습니다."
+        extra={
+          <Button type="primary" onClick={() => navigate("/")}>
+            메인으로
+          </Button>
+        }
+      />
+    </PageStyle>
   );
 };
 
