@@ -4,50 +4,32 @@ import { Button, Flex, Tooltip, Typography } from "antd";
 import { TitleProps } from "antd/es/typography/Title";
 import { FormatPainterOutlined } from "@ant-design/icons";
 import { editor } from "monaco-editor";
-import { Editor, EditorProps, Monaco } from "@monaco-editor/react";
 
 import { formatCode } from "../../utils/formatCode";
+import CodeEditor from "./CodeEditor";
 
-type Config = {
+type CodeInputConfig = {
   text: {
     fontLevel: TitleProps["level"];
     tooltip: string;
     format: string;
+    title: string;
   };
-  code: EditorProps;
 };
 
 interface CodeInputProps {
   onChange: (code?: string) => void;
   value: string;
-  config?: Config;
+  config?: CodeInputConfig;
 }
-
-export const defaultCode =
-  "const Component = () => {\n  return (\n    <div style={styles}>\n      <h1>Hello World</h1>\n    </div>\n  );\n};\n\nconst styles = {};\n";
 
 const defaultConfig = {
   text: {
     fontLevel: 5 as TitleProps["level"],
     tooltip: "코드 포맷팅",
     format: "Format",
+    title: "Component.tsx",
   },
-  code: {
-    language: "typescript",
-    theme: "vs-dark",
-    options: {
-      lineNumbers: "on",
-      scrollBeyondLastLine: false,
-      automaticLayout: true,
-      minimap: {
-        enabled: false,
-      },
-      fontSize: 14,
-    },
-    path: "Component.tsx",
-    defaultValue: defaultCode,
-    loading: <Typography.Text type="warning">에디터 준비중...</Typography.Text>,
-  } as EditorProps,
 };
 
 /**
@@ -58,10 +40,6 @@ const defaultConfig = {
  */
 const CodeInput: React.FC<CodeInputProps> = ({ onChange, value, config = defaultConfig }) => {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-
-  const onMountHandler = handleEditorWillMount((editor) => {
-    editorRef.current = editor;
-  });
 
   const onFormatHandler = async () => {
     if (!editorRef.current) return;
@@ -77,56 +55,22 @@ const CodeInput: React.FC<CodeInputProps> = ({ onChange, value, config = default
   return (
     <Container>
       <Flex justify="space-between" align="end">
-        <Typography.Title level={config.text.fontLevel}>{config.code.path}</Typography.Title>
+        <Typography.Title level={config.text.fontLevel}>{config.text.title}</Typography.Title>
         <Tooltip title={config.text.tooltip}>
           <Button type="text" icon={<FormatPainterOutlined />} onClick={onFormatHandler}>
             {config.text.format}
           </Button>
         </Tooltip>
       </Flex>
-
-      <CodeSandBox>
-        <Editor
-          {...config.code}
-          onChange={onChange}
-          onMount={onMountHandler}
-          defaultValue={value || config.code.defaultValue}
-        />
-      </CodeSandBox>
+      <CodeEditor onChange={onChange} data={value} />
     </Container>
   );
-};
-
-const handleEditorWillMount = (callback: (arg: editor.IStandaloneCodeEditor) => void) => {
-  return (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
-    monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-      noSemanticValidation: true,
-      noSyntaxValidation: false,
-    });
-
-    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-      jsx: monaco.languages.typescript.JsxEmit.React,
-      jsxFactory: "React.createElement",
-      reactNamespace: "React",
-      allowJs: true,
-      skipLibCheck: true,
-      esModuleInterop: true,
-    });
-
-    callback(editor);
-  };
 };
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-`;
-
-const CodeSandBox = styled.section`
-  width: 100%;
-  height: 100%;
-  background: #1e1e1e;
 `;
 
 export default CodeInput;
