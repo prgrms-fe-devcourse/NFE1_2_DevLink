@@ -1,9 +1,9 @@
 import JSXParser from "react-jsx-parser";
 import styled from "styled-components";
+import { Flex } from "antd";
+import { useEffect, useRef, useState } from "react";
 
 import { defaultCode } from "../../features/post-management/config";
-import { useEffect, useRef, useState } from "react";
-import { Flex } from "antd";
 
 type Config = {
   error: ErrorConfig;
@@ -16,16 +16,16 @@ const defaultConfig: Config = {
   },
 };
 
-interface CodeRenderProps {
+interface CodeRendererProps {
   data: string;
   config?: Config;
 }
 
 /**
- * `CodeRender` 컴포넌트는 문자열 형식으로 주어진 JSX 코드와 스타일을 파싱하여
+ * `CodeRenderer` 컴포넌트는 문자열 형식으로 주어진 JSX 코드와 스타일을 파싱하여
  * 이를 화면에 렌더링하는 역할을 합니다.
  *
- * @param {CodeRenderProps} props - 컴포넌트에 전달되는 props 객체
+ * @param {CodeRendererProps} props - 컴포넌트에 전달되는 props 객체
  * @param {string} props.data - JSX 및 스타일을 포함한 코드 문자열
  * @param {object} props.config.error.parse - 에러 이벤트가 발생했을때 명시할 에러 텍스트
  * @param {object} props.config.error.color - 에러 텍스트 색상 (기본값: red)
@@ -52,12 +52,12 @@ interface CodeRenderProps {
  * };
  * `;
  *
- * <CodeRender data={strCode} />
+ * <CodeRenderer data={strCode} />
  * ```
  *
  * 추출된 JSX 코드를 `JSXParser`를 통해 렌더링하고, `styles`는 컴포넌트에 바인딩됩니다.
  */
-const CodeRender: React.FC<CodeRenderProps> = ({ data, config = defaultConfig }) => {
+const CodeRenderer: React.FC<CodeRendererProps> = ({ data, config = defaultConfig }) => {
   const [isScrollable, setIsScrollable] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -171,4 +171,4 @@ const CodeRenderErrorText = styled.h1<{ color: string }>`
   text-align: center;
 `;
 
-export default CodeRender;
+export default CodeRenderer;

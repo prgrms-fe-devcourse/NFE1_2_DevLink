@@ -1,46 +1,61 @@
 import React from "react";
 import styled from "styled-components";
-import JSXParser from "react-jsx-parser";
+import { EditOutlined, EllipsisOutlined, SettingOutlined } from "@ant-design/icons";
+import { Avatar, Card, Flex } from "antd";
 
 import { PostPayload } from "./type";
-import { defaultCode } from "../../components/post/CodeInput";
+import CodeRenderer from "../../components/post/CodeRender";
 
+const { Meta } = Card;
 interface PostPreviewProps {
   data: PostPayload;
 }
 
-const PostPreview: React.FC<PostPreviewProps> = ({ data: { code } }) => {
-  const { parsedCode, styles } = parserCode(code);
-
-  console.log(parsedCode, styles);
+const PostPreview: React.FC<PostPreviewProps> = ({ data: { code, title, summary } }) => {
   return (
-    <Container>
-      <JSXParser jsx={parsedCode} bindings={{ styles }} />
-    </Container>
+    <OuterContainer>
+      <InnerContainer>
+        <Card
+          title="Component.tsx"
+          cover={
+            <Flex>
+              <CodeRenderer data={code} />
+            </Flex>
+          }
+          actions={[
+            <SettingOutlined key="setting" />,
+            <EditOutlined key="edit" />,
+            <EllipsisOutlined key="ellipsis" />,
+          ]}>
+          <Meta
+            avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />}
+            title={title}
+            description={summary}
+          />
+        </Card>
+      </InnerContainer>
+    </OuterContainer>
   );
 };
 
-const parserCode = (target: string) => {
-  const code = target || defaultCode;
-  const styleMatch = code.match(/const styles = \{([\s\S]*?)\};/);
-  const styleString = styleMatch
-    ? styleMatch[0].replace("const styles = ", "").replace(/;/g, "")
-    : "{}";
-  const styles = new Function(`return (${styleString})`)();
-  const match = code.match(/return\s*\(\s*([\s\S]*?)\s*\);/);
-
-  if (!match) {
-    throw new Error("sdf");
-  }
-
-  return { parsedCode: match[1], styles };
+const config = {
+  style: {
+    maxWidth: 610,
+    backgroundColor: "gray",
+  },
 };
 
-const Container = styled.main`
-  flex: 1;
+const OuterContainer = styled.div`
   display: flex;
   justify-content: center;
-  background-color: pink;
+  background-color: ${config.style.backgroundColor};
+  padding: 10px;
+`;
+
+const InnerContainer = styled.div`
+  flex: 1;
+  max-width: ${config.style.maxWidth}px;
+  overflow: hidden;
 `;
 
 export default PostPreview;
