@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Card } from "antd";
+import { HeartOutlined, UserOutlined } from "@ant-design/icons";
 import LikeButton from "./LikeButton";
-
-// Author 타입 정의
-interface Author {
-  fullName: string;
-  email: string;
-}
+import { useNavigate } from "react-router-dom";
 
 // Post 타입 정의
 interface Post {
@@ -18,6 +14,14 @@ interface Post {
   summary: string; // 한 줄 요약
   likes: any[]; //배열임
   comments: any[]; //배열임
+  preview: string;
+}
+
+// Author 타입 정의
+interface Author {
+  fullName: string;
+  email: string;
+  _id: string;
 }
 
 // PostCardProps 타입 정의
@@ -25,7 +29,7 @@ interface PostCardProps {
   postId: string;
 }
 
-// Styled Components
+// Styled Components /////////////////////////////////////////////////
 const StyledCard = styled(Card)`
   border: 1px solid #9b9b9b;
   margin: 20px auto;
@@ -33,14 +37,22 @@ const StyledCard = styled(Card)`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 610px;
   height: 570px;
+  box-sizing: border-box;
+  overflow: hidden;
 `;
 
-const ImagePlaceholder = styled.div`
+const PreviewContainer = styled.div`
   background-color: #e9e9e9;
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
   height: 343px;
   width: 610px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  color: #333;
 `;
 
 const FirstLine = styled.div`
@@ -49,10 +61,22 @@ const FirstLine = styled.div`
   align-items: center;
 `;
 
+const AuthorContainer = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+`;
+
 const SecondLine = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
+`;
+
+const StyledUserOutlined = styled(UserOutlined)`
+  font-size: 16px; /* 아이콘 크기 조정 */
+  vertical-align: middle; /* 수평 정렬 */
+  margin: 0;
 `;
 
 const PostInfo = styled.div`
@@ -83,6 +107,14 @@ const PostSummary = styled.p`
 const PostCard: React.FC<PostCardProps> = ({ postId }) => {
   const [post, setPost] = useState<Post | null>(null); // 하나의 포스트를 가져옴
   const [loading, setLoading] = useState<boolean>(true);
+
+  const navigate = useNavigate();
+
+  //작성자 클릭 시 마이페이지로 네비게이터 함수
+  const handleAuthorClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // 부모로 이벤트 전파 중지
+    navigate(`/profile/${post?.author._id}`);
+  };
 
   const fetchPost = async () => {
     try {
@@ -116,7 +148,7 @@ const PostCard: React.FC<PostCardProps> = ({ postId }) => {
 
   return (
     <StyledCard bodyStyle={{ padding: "0" }}>
-      <ImagePlaceholder />
+      <PreviewContainer>{post?.preview ? post.preview : "no image"}</PreviewContainer>
       <PostInfo>
         <FirstLine>
           <PostTitle>
@@ -125,7 +157,10 @@ const PostCard: React.FC<PostCardProps> = ({ postId }) => {
           <LikeButton postId={post._id} initialLikeCount={post.likes.length} />
         </FirstLine>
         <SecondLine>
-          <PostAuthor>{post.author.fullName}</PostAuthor>
+          <AuthorContainer onClick={handleAuthorClick}>
+            <StyledUserOutlined />
+            <PostAuthor>{post.author.fullName}</PostAuthor>
+          </AuthorContainer>
           <PostDate>{new Date(post.createdAt).toLocaleDateString("ko-KR")}</PostDate>
           <PostDate>{post.comments.length}개의 댓글</PostDate>
         </SecondLine>

@@ -44,7 +44,9 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, initialLikeCount, style
   const [isLiked, setIsLiked] = useState<boolean>(false);
 
   // 좋아요 처리 함수
-  const handleLike = async () => {
+  const handleLike = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // 이벤트 전파 중지 (이벤트버블링)
+
     const jwtToken = localStorage.getItem("jwtToken");
 
     if (!jwtToken) {
