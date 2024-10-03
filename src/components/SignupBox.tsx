@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Input, Button } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { LOGIN } from "../features/redux/store";
 
 //UserData 정의
@@ -17,7 +17,9 @@ interface PropsData {
   userData: UserData;
 }
 
-// styled component : Box
+// 스타일링 코드 시작
+
+// 회원가입 박스 스타일링
 const BoxStyle = styled.div`
   width: 500px;
   height: 600px;
@@ -27,35 +29,26 @@ const BoxStyle = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  border: 1px solid #efefef; // 확인용
+  border: 1px solid #efefef;
 
   form {
     width: 100%;
   }
 `;
 
-// styled component : Logo
+// 로고
 const LogoStyle = styled.img`
   width: 250px;
   height: 50px;
   margin-bottom: 50px;
 `;
 
-// styled component : Input
+// 입력창
 const InputStyle = styled(Input)`
   padding: 15px;
 `;
 
-// styled component : SubmitButton
-const SubmitButton = styled(Button)`
-  padding: 23px;
-  margin-bottom: 15px;
-`;
-
-// styled component : LoginButton
-const LoginButton = styled(Button)``;
-
-// styled component : ErrorMessage
+// 에러 메시지
 const ErrorMessage = styled.div`
   color: red;
   margin: 5px 0;
@@ -64,6 +57,17 @@ const ErrorMessage = styled.div`
   min-height: 20px;
   font-size: 15px;
 `;
+
+// 회원가입 버튼
+const SubmitButton = styled(Button)`
+  padding: 23px;
+  margin-bottom: 15px;
+`;
+
+// 로그인 버튼
+const LoginButton = styled(Button)``;
+
+// 스타일링 코드 종료
 
 const SignupBox = ({ userData }: PropsData) => {
   const navigate = useNavigate();
@@ -135,17 +139,20 @@ const SignupBox = ({ userData }: PropsData) => {
         });
         if (response.ok) {
           const data = await response.json();
+          // 유저 토큰 localStorage에 저장
+          window.localStorage.setItem("userToken", data.token);
           console.log("로그인 성공", data);
+          // isLogin : false에서 true로 변경
           dispatch({ type: LOGIN });
           navigate("/");
         } else {
           const errorData = await response.json();
           console.log("회원가입 실패", errorData);
-          alert("회원가입에 실패했습니다. 이메일과 이름, 비밀번호를 정확히 입력해 주세요.");
+          alert("회원가입에 실패했습니다. 다시 시도해주세요.");
         }
       } catch (error) {
         console.error("API 호출 중 오류 발생", error);
-        alert("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
+        alert("이미 존재하는 이메일입니다. 다른 이메일을 입력해 주세요.");
       }
     }
   };

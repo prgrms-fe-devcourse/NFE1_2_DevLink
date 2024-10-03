@@ -2,11 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Input, Button } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { LOGIN } from "../features/redux/store";
-
-// // store의 isLogin 값에 접근
-// const selectIsLogin = (state: any) => state.user.isLogin;
 
 //UserData 정의
 interface UserData {
@@ -19,7 +16,9 @@ interface PropsData {
   userData: UserData;
 }
 
-// 로그인 박스 스타일 지정
+// 스타일링 코드 시작
+
+// 로그인 박스 스타일링
 const BoxStyle = styled.div`
   width: 500px;
   height: 600px;
@@ -36,19 +35,19 @@ const BoxStyle = styled.div`
   }
 `;
 
-// styled component : 로고
+// 로고
 const LogoStyle = styled.img`
   width: 250px;
   height: 50px;
   margin-bottom: 50px;
 `;
 
-// styled component : 입력창
+// 입력창
 const InputStyle = styled(Input)`
   padding: 15px;
 `;
 
-// styled component : 에러 메시지
+// 에러 메시지
 const ErrorMessage = styled.div`
   color: red;
   margin: 5px 0;
@@ -58,15 +57,15 @@ const ErrorMessage = styled.div`
   font-size: 15px;
 `;
 
-// styled component : 로그인 버튼
+// 로그인 버튼
 const LoginButton = styled(Button)`
   padding: 23px;
 `;
 
-// styled component : 회원가입 버튼
+// 회원가입 버튼
 const SignUpButton = styled(Button)``;
 
-// styled component : OR 텍스트 부분
+// OR 텍스트 부분
 const OrDiv = styled.div`
   display: flex;
   align-items: center;
@@ -86,7 +85,7 @@ const OrText = styled.div`
   color: #959595;
 `;
 
-// styled component : 카카오 로그인 버튼
+// 카카오 로그인 버튼
 const KakaoButton = styled.button`
   background-color: #fee500;
   color: #000;
@@ -116,6 +115,8 @@ const KakaoButton = styled.button`
     margin-right: 12px;
   }
 `;
+
+// 스타일링 코드 종료
 
 const LoginBox = ({ userData }: PropsData) => {
   const navigate = useNavigate();
@@ -170,17 +171,20 @@ const LoginBox = ({ userData }: PropsData) => {
         });
         if (response.ok) {
           const data = await response.json();
+          // 유저 토큰 localStorage에 저장
+          window.localStorage.setItem("userToken", data.token);
           console.log("로그인 성공", data);
+          // isLogin : false에서 true로 변경
           dispatch({ type: LOGIN });
           navigate("/");
         } else {
           const errorData = await response.json();
           console.log("로그인 실패", errorData);
-          alert("로그인에 실패했습니다. 이메일과 비밀번호를 정확히 입력해 주세요.");
+          alert("로그인에 실패했습니다. 다시 시도해주세요.");
         }
       } catch (error) {
         console.error("API 호출 중 오류 발생", error);
-        alert("로그인 중 오류가 발생했습니다. 다시 시도해주세요.");
+        alert("이메일 또는 비밀번호가 잘못 되었습니다. 이메일와 비밀번호를 정확히 입력해 주세요.");
       }
     }
   };
