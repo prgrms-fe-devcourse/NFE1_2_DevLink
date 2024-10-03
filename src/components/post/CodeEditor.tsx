@@ -1,7 +1,7 @@
 import { Editor, EditorProps, Monaco } from "@monaco-editor/react";
 import styled from "styled-components";
 import { Typography } from "antd";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { editor } from "monaco-editor";
 
 interface CodeEditorProps {
@@ -61,6 +61,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange, data, config }) => {
   };
 
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+
+  useEffect(() => {
+    if (data && editorRef.current) {
+      editorRef.current.setValue(data);
+    }
+  }, [data]);
 
   const onMountHandler = handleEditorWillMount((editor) => {
     editorRef.current = editor;
