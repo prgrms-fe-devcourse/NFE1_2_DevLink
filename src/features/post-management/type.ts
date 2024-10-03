@@ -5,7 +5,7 @@ export type PostPayload = {
   summary: string;
 };
 
-export type PostStatus = "create" | "preview";
+export type PostStatus = "create" | "preview" | "modify";
 
 export type PostState = {
   payload: PostPayload;

@@ -16,18 +16,6 @@ const config = {
   },
 };
 
-const initialPostPayload = {
-  title: "포스트 제목을 작성해 주세요!",
-  code: "",
-  body: "포스트 한줄 요약을 작성해 주세요!",
-  summary: "포스트 한줄 요약을 작성해 주세요!",
-};
-
-const initialPostState: PostState = {
-  payload: initialPostPayload,
-  status: "create",
-};
-
 const defaultCode = `const Component = () => {
   return (
     <div style={styles}>
@@ -43,5 +31,17 @@ const styles = {
   textAlign: "center",
 };
 `;
+
+const initialPostPayload = {
+  title: "포스트 제목을 작성해 주세요!",
+  code: defaultCode,
+  body: "포스트 한줄 요약을 작성해 주세요!",
+  summary: "포스트 한줄 요약을 작성해 주세요!",
+};
+
+const initialPostState: PostState = {
+  payload: initialPostPayload,
+  status: "create",
+};
 
 export { config, initialPostState, initialPostPayload, defaultCode };

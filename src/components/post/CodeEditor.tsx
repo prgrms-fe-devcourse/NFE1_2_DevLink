@@ -4,8 +4,6 @@ import { Typography } from "antd";
 import { useRef } from "react";
 import { editor } from "monaco-editor";
 
-import { defaultCode } from "../../features/post-management/config";
-
 interface CodeEditorProps {
   onChange?: (code?: string) => void;
   data?: string;
@@ -25,7 +23,6 @@ const defaultConfig: EditorProps = {
     fontSize: 14,
   },
   path: "Component.tsx",
-  defaultValue: defaultCode,
   loading: <Typography.Text type="warning">에디터 준비중...</Typography.Text>,
 };
 
@@ -71,12 +68,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange, data, config }) => {
 
   return (
     <Container>
-      <Editor
-        {...mergedConfig}
-        onChange={onChange}
-        onMount={onMountHandler}
-        defaultValue={data || mergedConfig.defaultValue}
-      />
+      <Editor {...mergedConfig} onChange={onChange} onMount={onMountHandler} defaultValue={data} />
     </Container>
   );
 };

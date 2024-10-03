@@ -3,8 +3,6 @@ import styled from "styled-components";
 import { Flex } from "antd";
 import { useEffect, useRef, useState } from "react";
 
-import { defaultCode } from "../../features/post-management/config";
-
 type Config = {
   error: ErrorConfig;
 };
@@ -126,7 +124,7 @@ type ParserCodeState = {
 
 const extractCodeAndStyles = (target: string) => {
   const state: ParserCodeState = { isError: false, code: "", styles: {} };
-  const code = target || defaultCode;
+  const code = target;
   const styleMatch = code.match(/const styles = \{([\s\S]*?)\};/);
   const styleString = styleMatch
     ? styleMatch[0].replace("const styles = ", "").replace(/;/g, "")
