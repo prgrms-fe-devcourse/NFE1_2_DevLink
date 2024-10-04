@@ -3,28 +3,44 @@ import styled from "styled-components";
 
 import { config } from "./config";
 import { usePost } from "../../hooks/usePost";
-import { PostActionType } from "./type";
-import { toggleState } from "../../utils/toggleState";
+import { PostActionType, PostStatus } from "./type";
+import { useEffect, useRef } from "react";
+
+const label: Record<PostStatus, string> = {
+  create: "포스트 미리보기",
+  modify: "포스트 미리보기",
+  preview: "미리보기 종료",
+};
 
 const PostFormHeader = () => {
   const {
     dispatch,
     state: { status },
   } = usePost();
+  const prevArrStatusRef = useRef<PostStatus[]>([]);
+
+  const prevArrLength = prevArrStatusRef.current.length;
+  const lastElement = prevArrLength > 0 ? prevArrStatusRef.current[prevArrLength - 1] : status;
+
+  useEffect(() => {
+    prevArrStatusRef.current.push(status);
+
+    return () => {
+      prevArrStatusRef.current = [];
+    };
+  }, [status]);
 
   const onClickStatusHandler = () => {
     dispatch({
       type: PostActionType.SET_STATUS,
-      payload: toggleState(status, "create", "preview"),
+      payload: status === "preview" ? lastElement : "preview",
     });
   };
-
-  const label = status === "create" ? "포스트 미리보기" : "미리보기 종료";
 
   return (
     <OuterContainer>
       <InnerContainer>
-        <Button onClick={onClickStatusHandler}>{label}</Button>
+        <Button onClick={onClickStatusHandler}> {label[status]}</Button>
       </InnerContainer>
     </OuterContainer>
   );

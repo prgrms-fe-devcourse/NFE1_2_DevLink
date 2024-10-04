@@ -10,7 +10,7 @@ const PostFormMain = () => {
   const postContext = usePost();
 
   const renderFormComponent = () => {
-    if (postContext.state.status === "create") {
+    if (postContext.state.status !== "preview") {
       return <PostFormInput context={postContext} />;
     }
 

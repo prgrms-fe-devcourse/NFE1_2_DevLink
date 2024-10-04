@@ -5,12 +5,25 @@ import { SaveOutlined } from "@ant-design/icons";
 
 import { usePost } from "../../hooks/usePost";
 import useLocalStorage from "../../hooks/useLocalStorage";
-import { PostActionType, PostPayload } from "./type";
+import { PostActionType, PostPayload, PostStatus } from "./type";
 import { config, initialPostPayload } from "./config";
+
+const label: Record<PostStatus, string> = {
+  create: "포스트 생성",
+  modify: "포스트 수정",
+  preview: "포스트 작업",
+};
+
+const initPostPayload: PostPayload = {
+  title: "",
+  code: "",
+  body: "",
+  summary: "",
+};
 
 const PostFormFooter = () => {
   const { state, dispatch } = usePost();
-  const [storedValue, setValue] = useLocalStorage<PostPayload>("post-form", initialPostPayload);
+  const [storedValue, setValue] = useLocalStorage<PostPayload>("post-form", initPostPayload);
 
   const isSaved = Object.values(storedValue).some((value) => value !== "");
 
@@ -28,25 +41,35 @@ const PostFormFooter = () => {
   return (
     <OuterContainer>
       <InnerContainer>
-        <TemporaryStorageButton onClick={() => setValue(state.payload)} />
+        <TemporaryStorageButton
+          onClick={() => setValue(state.payload)}
+          disabled={state.status === "modify" || state.status === "preview"}
+        />
         <Button
           type="primary"
+          disabled={state.status === "preview"}
           onClick={() => {
-            console.log(state);
+            console.log(state.payload);
             setValue(initialPostPayload);
           }}>
-          포스트 생성
+          {label[state.status]}
         </Button>
       </InnerContainer>
     </OuterContainer>
   );
 };
 
-const TemporaryStorageButton = ({ onClick }: { onClick: () => void }) => {
+const TemporaryStorageButton = ({
+  onClick,
+  disabled,
+}: {
+  onClick: () => void;
+  disabled: boolean;
+}) => {
   const [clickStatus, setClickStatus] = useState(false);
 
   const label = {
-    default: "저장 하기",
+    default: "임시 저장",
     success: "저장 완료",
   };
   const buttonText = clickStatus ? label.success : label.default;
@@ -62,7 +85,7 @@ const TemporaryStorageButton = ({ onClick }: { onClick: () => void }) => {
   };
 
   return (
-    <Button onClick={onClickHandler} icon={<SaveOutlined />}>
+    <Button onClick={onClickHandler} icon={<SaveOutlined />} disabled={disabled}>
       {buttonText}
     </Button>
   );
