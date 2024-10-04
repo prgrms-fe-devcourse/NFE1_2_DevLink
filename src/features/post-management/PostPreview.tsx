@@ -4,7 +4,7 @@ import { EditOutlined, EllipsisOutlined, SettingOutlined } from "@ant-design/ico
 import { Avatar, Card, Flex } from "antd";
 
 import { PostPayload } from "./type";
-import CodeRenderer from "../../components/Post/CodeRender";
+import CodeRenderer from "../../components/post/CodeRender";
 
 const { Meta } = Card;
 interface PostPreviewProps {

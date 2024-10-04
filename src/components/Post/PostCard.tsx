@@ -122,6 +122,11 @@ const PostCard: React.FC<PostCardProps> = ({ postId }) => {
     navigate(`/profile/${post?.author._id}`);
   };
 
+  //포스트 클릭 시 상세페이지로 네비게이터 함수
+  const handlePostClick = (postId: string) => {
+    navigate(`post/${postId}`);
+  };
+
   const fetchPost = async () => {
     try {
       const response = await fetch(
@@ -153,7 +158,7 @@ const PostCard: React.FC<PostCardProps> = ({ postId }) => {
   }
 
   return (
-    <StyledCard bodyStyle={{ padding: "0" }}>
+    <StyledCard bodyStyle={{ padding: "0" }} onClick={() => handlePostClick(post._id)}>
       <PreviewContainer>
         {(() => {
           try {
