@@ -39,3 +39,8 @@ export type PostContextProps = {
 export type PostFormHandler = (
   type: PostActionType
 ) => <T extends HTMLElement>(e: React.ChangeEvent<T>) => void;
+
+export type PostSchema = {
+  _id: string;
+  title: string;
+};
