@@ -52,11 +52,6 @@ const PostList: React.FC<PostListProps> = ({ channelId, offset = 0, limit = 10 }
     fetchPosts();
   }, [channelId, offset, limit]);
 
-  //포스트 클릭 시 상세페이지로 네비게이터 함수
-  const handlePostClick = (postId: string) => {
-    navigate(`post/${postId}`);
-  };
-
   if (loading) {
     return <div>포스트 목록을 불러오는 중...</div>;
   }
@@ -74,8 +69,7 @@ const PostList: React.FC<PostListProps> = ({ channelId, offset = 0, limit = 10 }
   return (
     <div className="post-list">
       {posts.map((post) => (
-        <div key={post._id} onClick={() => handlePostClick(post._id)}>
-          {/* PostCard를 클릭하면 상세 페이지로 이동 */}
+        <div key={post._id}>
           <PostCard postId={post._id} />
         </div>
       ))}
