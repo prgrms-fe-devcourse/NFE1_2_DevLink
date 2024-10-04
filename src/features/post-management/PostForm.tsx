@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 import { message } from "antd";
+import { useQuery } from "react-query";
+import styled from "styled-components";
 
 import { usePost } from "../../hooks/usePost";
 import { PostActionType } from "./type";
@@ -7,8 +9,7 @@ import PostFormHeader from "./PostFormHeader";
 import PostFormMain from "./PostFormMain";
 import PostFormFooter from "./PostFormFooter";
 import { PostRequestError, requestPostDetail } from "./api";
-import { useQuery } from "react-query";
-import styled from "styled-components";
+
 import { config } from "./config";
 
 interface PostFormProps {
