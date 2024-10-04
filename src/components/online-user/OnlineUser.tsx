@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 // 사용자 목록 가장 큰 테두리
 const OnlineUserContainer = styled.div`
+  z-index: 0;
   position: absolute;
   top: 150px;
   right: 30px;
