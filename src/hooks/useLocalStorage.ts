@@ -90,7 +90,7 @@ const createLocalStorageManager = <T>(key: string) => {
   return manager;
 };
 
-class LocalStorage {
+export class LocalStorage {
   private storage: Storage;
 
   constructor() {
