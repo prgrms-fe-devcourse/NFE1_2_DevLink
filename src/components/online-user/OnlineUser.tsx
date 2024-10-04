@@ -79,7 +79,10 @@ const OnlineUser = () => {
       }
     };
     fetchOnlineUser();
-  }, [onlineUserList]);
+    setInterval(() => {
+      fetchOnlineUser();
+    }, 5000);
+  }, []);
 
   return (
     <OnlineUserContainer>
