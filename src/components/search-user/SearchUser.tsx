@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const SearchContainer = styled.div`
+  z-index: 1;
   position: absolute;
   top: 60px;
   right: 30px;
@@ -35,15 +36,17 @@ const SearchInput = styled.input`
 `;
 
 const AutoComplete = styled.ul`
+  z-index: 100px;
   width: 252px;
   max-height: 200px;
-  background-color: rgba(128, 128, 128, 0.3);
+  background-color: #fff;
   display: flex;
   flex-direction: column;
   padding: 0;
   margin: 0;
   overflow-x: hidden;
   overflow-y: scroll;
+  cursor: pointer;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -52,7 +55,11 @@ const AutoComplete = styled.ul`
     display: flex;
     flex-direction: row;
     padding: 5px 0px;
+    background-color: #fff;
     border: 1px solid #ccc;
+    &:hover {
+      background-color: #ccc;
+    }
   }
 `;
 
@@ -100,15 +107,29 @@ const SearchUser = () => {
     navigate(`/profile/${user._id}`); // "/profile/${유저 고유 아이디}"로 이동시킨다.
   };
 
+  const onKeyDownEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleUserClick(autoComplete[0]);
+    }
+  };
+
   return (
     <SearchContainer>
       <SearchBar>
         <SearchInput
           value={inputValue}
           onChange={onChangeInput}
+          onKeyDown={(e) => {
+            onKeyDownEnter(e);
+          }}
           placeholder="검색어를 입력해주세요"
         />
-        <div>🔍</div>
+        <div
+          onClick={() => {
+            handleUserClick(autoComplete[0]);
+          }}>
+          🔍
+        </div>
       </SearchBar>
       <AutoComplete>
         {autoComplete.map((user) => (
