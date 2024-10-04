@@ -66,9 +66,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange, data, config }) => {
   useEffect(() => {
     if (isMount.current === true) return;
 
+    isMount.current = true;
+
     if (data && editorRef.current) {
       editorRef.current.setValue(data);
-      isMount.current = true;
     }
   }, [data]);
 

@@ -8,7 +8,7 @@ import { usePost } from "../../hooks/usePost";
 import useLocalStorage, { LocalStorage } from "../../hooks/useLocalStorage";
 import { PostActionType, PostPayload, PostStatus } from "./type";
 import { CHANNEL_ID, config, initialPostPayload, SERVER_URL } from "./config";
-import { sendPostRequest } from "./api";
+import { PostRequestError, sendPostRequest } from "./api";
 
 const label: Record<PostStatus, string> = {
   create: "포스트 생성",
@@ -21,58 +21,30 @@ const localStorage = new LocalStorage();
 const PostFormFooter = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
-  const { state, dispatch } = usePost();
+  const {
+    state: { payload, status },
+    dispatch,
+  } = usePost();
   const [storedValue, setValue] = useLocalStorage<PostPayload>("post-form", initialPostPayload);
 
-  const userToken = localStorage.getItem("userToken");
   const isSaved = Object.values(storedValue).some((value) => value !== "");
-
-  const handler: Record<PostStatus, () => void> = {
-    async create() {
-      if (userToken) {
-        const userId = await sendPostRequest({
-          url: `${SERVER_URL}/posts/create`,
-          method: "POST",
-          jwtToken: userToken,
-          payload: state.payload,
-          additionalData: {
-            channelId: CHANNEL_ID,
-          },
-        });
-
-        if (!userId) {
-          message.error("Error occurred: Failed to read userId");
-          return;
-        }
-
-        setValue(initialPostPayload);
-        navigate(`/profile/${userId}`, { replace: true });
+  const handler = handlePostActions({
+    postId,
+    channelId: CHANNEL_ID,
+    payload,
+    onError(error) {
+      if (error instanceof PostRequestError) {
+        message.error(error.message);
+        return;
       }
-    },
-    async modify() {
-      if (userToken && postId) {
-        const userId = await sendPostRequest({
-          url: `${SERVER_URL}/posts/update`,
-          method: "PUT",
-          jwtToken: userToken,
-          payload: state.payload,
-          additionalData: {
-            postId,
-            channelId: CHANNEL_ID,
-          },
-        });
 
-        if (!userId) {
-          message.error("Error occurred: Failed to read userId");
-          return;
-        }
-
-        setValue(initialPostPayload);
-        navigate(`/profile/${userId}`, { replace: true });
-      }
+      throw error;
     },
-    preview() {},
-  };
+    onSuccess(userId) {
+      setValue(initialPostPayload);
+      navigate(`/profile/${userId}`, { replace: true });
+    },
+  });
 
   useEffect(() => {
     if (isSaved) {
@@ -85,27 +57,83 @@ const PostFormFooter = () => {
     <OuterContainer>
       <InnerContainer>
         <TemporaryStorageButton
-          onClick={() => setValue(state.payload)}
-          disabled={state.status === "modify" || state.status === "preview"}
+          onClick={() => setValue(payload)}
+          disabled={status === "modify" || status === "preview"}
         />
-        <Button
-          type="primary"
-          disabled={state.status === "preview"}
-          onClick={handler[state.status]}>
-          {label[state.status]}
+        <Button type="primary" disabled={status === "preview"} onClick={handler[status]}>
+          {label[status]}
         </Button>
       </InnerContainer>
     </OuterContainer>
   );
 };
 
-const TemporaryStorageButton = ({
-  onClick,
-  disabled,
-}: {
+type Options = {
+  postId?: string;
+  channelId: string;
+  payload: PostPayload;
+  onSuccess: (userId: string) => void;
+  onError: (error: unknown) => void;
+};
+
+const handlePostActions = (options: Options) => {
+  const userToken = localStorage.getItem("userToken");
+
+  const handlePostRequest = async (
+    url: string,
+    method: "POST" | "PUT",
+    additionalData: Record<string, string>
+  ) => {
+    if (userToken) {
+      try {
+        const userId = await sendPostRequest({
+          url,
+          method,
+          jwtToken: userToken,
+          payload: options.payload,
+          additionalData,
+        });
+
+        if (!userId) {
+          message.error("Error occurred: Failed to read userId");
+          return;
+        }
+
+        message.success(
+          method === "POST" ? "Successful post creation" : "Successful post modification"
+        );
+
+        options.onSuccess(userId);
+      } catch (error) {
+        options.onError(error);
+      }
+    }
+  };
+
+  const handler: Record<PostStatus, () => void> = {
+    create() {
+      handlePostRequest(`${SERVER_URL}/posts/create`, "POST", { channelId: CHANNEL_ID });
+    },
+    modify() {
+      if (options.postId) {
+        handlePostRequest(`${SERVER_URL}/posts/update`, "PUT", {
+          postId: options.postId,
+          channelId: CHANNEL_ID,
+        });
+      }
+    },
+    preview() {},
+  };
+
+  return handler;
+};
+
+interface TemporaryStorageButtonProps {
   onClick: () => void;
   disabled: boolean;
-}) => {
+}
+
+const TemporaryStorageButton: React.FC<TemporaryStorageButtonProps> = ({ onClick, disabled }) => {
   const [clickStatus, setClickStatus] = useState(false);
 
   const buttonText = clickStatus ? "저장 완료" : "임시 저장";
