@@ -45,7 +45,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, initialLikeCount, style
 
   // 좋아요 처리 함수
   const handleLike = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // 이벤트 전파 중지 (이벤트버블링)
+    e.stopPropagation(); // 이벤트 전파 중지 (이벤트 버블링)
 
     const jwtToken = localStorage.getItem("jwtToken");
 
@@ -60,6 +60,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, initialLikeCount, style
     };
 
     try {
+      // 좋아요 요청
       const response = await fetch("https://kdt.frontend.5th.programmers.co.kr:5004/likes/create", {
         method: "POST",
         headers,
@@ -67,7 +68,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, initialLikeCount, style
       });
 
       if (!response.ok) {
-        // 서버가 502 또는 다른 에러를 반환할 때
+        // 서버 응답 상태에 따라 에러 처리
         if (response.status === 502) {
           console.error("서버 문제로 요청을 처리할 수 없습니다 (502 Bad Gateway).");
         } else if (response.status === 401) {
@@ -78,12 +79,43 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, initialLikeCount, style
         return;
       }
 
-      const data = await response.json();
+      const data = await response.json(); // 좋아요 처리 결과
       setLikeCount((prev) => prev + 1);
       setIsLiked(true);
       console.log("좋아요 처리 완료");
+
+      // 알림 생성 요청
+      await createNotification(data._id, postId, jwtToken);
     } catch (error) {
       console.error("좋아요 처리 중 오류 발생:", error);
+    }
+  };
+
+  // 알림 생성 함수
+  const createNotification = async (likeId: string, postId: string, jwtToken: string) => {
+    try {
+      const response = await fetch(
+        "https://kdt.frontend.5th.programmers.co.kr:5004/notifications/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify({
+            notificationType: "LIKE",
+            notificationTypeId: likeId, // 좋아요 ID를 알림에 사용
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("알림 생성 실패");
+      }
+
+      console.log("알림 생성 완료");
+    } catch (error) {
+      console.error("알림 생성 중 오류 발생:", error);
     }
   };
 
