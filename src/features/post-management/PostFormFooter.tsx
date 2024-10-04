@@ -57,7 +57,7 @@ const PostFormFooter = () => {
           jwtToken: userToken,
           payload: state.payload,
           additionalData: {
-            postId: "66ff4b7908e55f14d0a2b3fa",
+            postId,
             channelId: CHANNEL_ID,
           },
         });
