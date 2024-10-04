@@ -6,7 +6,10 @@ import { PostActionType } from "./type";
 import PostFormHeader from "./PostFormHeader";
 import PostFormMain from "./PostFormMain";
 import PostFormFooter from "./PostFormFooter";
-import { requestPostDetail } from "./api";
+import { PostRequestError, requestPostDetail } from "./api";
+import { useQuery } from "react-query";
+import styled from "styled-components";
+import { config } from "./config";
 
 interface PostFormProps {
   isEdit?: boolean;
@@ -14,23 +17,57 @@ interface PostFormProps {
 }
 
 const PostForm: React.FC<PostFormProps> = ({ isEdit, postId }) => {
+  const isEditStatus = Boolean(isEdit && postId);
+
   const { dispatch, state } = usePost();
+  const { error } = useQuery(
+    ["postDetail", postId],
+    () => {
+      if (!postId) {
+        throw new PostRequestError("The postId attribute is required in the edit state.");
+      }
 
-  useEffect(() => {
-    if (isEdit && postId) {
-      dispatch({ type: PostActionType.SET_STATUS, payload: "modify" });
-      requestPostDetail(postId).then((payload) => {
+      return requestPostDetail(postId);
+    },
+    {
+      enabled: isEditStatus,
+      retry: false,
+      onSuccess: ({ reason, payload }) => {
         if (!payload) {
-          return message.error("Error occurred: Failed to read a post");
+          throw new PostRequestError("Error occurred: Failed to read a post");
         }
-
+        message.success(reason);
         dispatch({
           type: PostActionType.SET_ALL,
           payload,
         });
-      });
+      },
+      onError: (error) => {
+        if (error instanceof PostRequestError) {
+          message.error(error.message);
+
+          return;
+        }
+
+        throw error;
+      },
     }
-  }, [dispatch, isEdit, postId]);
+  );
+
+  useEffect(() => {
+    if (isEditStatus) {
+      dispatch({ type: PostActionType.SET_STATUS, payload: "modify" });
+    }
+  }, [dispatch, isEditStatus]);
+
+  if (error) {
+    return (
+      <ErrorContainer>
+        <h1>Error!</h1>
+        <h1>{"Failed to load data for editing a post."}</h1>
+      </ErrorContainer>
+    );
+  }
 
   return (
     <>
@@ -41,5 +78,20 @@ const PostForm: React.FC<PostFormProps> = ({ isEdit, postId }) => {
     </>
   );
 };
+
+const { style } = config;
+
+const ErrorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background-color: ${style.background};
+
+  & > h1 {
+    color: red;
+  }
+`;
 
 export default PostForm;
