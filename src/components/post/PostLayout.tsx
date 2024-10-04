@@ -3,13 +3,16 @@ import { PropsWithChildren } from "react";
 import styled from "styled-components";
 
 import { config } from "../../features/post-management/config";
+import NavigationBar from "../Navigation/NavigationBar";
 
 const { Sider, Content } = Layout;
 
 const PostLayout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <Layout>
-      <Sider collapsed></Sider>
+      <Sider collapsed>
+        <NavigationBar />
+      </Sider>
       <Layout>
         <Container>{children}</Container>
       </Layout>
@@ -23,10 +26,6 @@ const Container = styled(Content)`
   height: 100vh;
   background: ${config.style.outerBackground};
   padding: 40px;
-
-  @media (max-width: 768px) {
-    padding: 40px 0;
-  }
 `;
 
 export default PostLayout;
