@@ -5,6 +5,7 @@ import { useQuery } from "react-query";
 
 import { useAppDispatch, useAppSelector } from "../hooks/useAppRedux";
 import { decrement, increment } from "../features/counter/counterSlice";
+import NavigationBar from "../components/Navigation/NavigationBar";
 
 // TODO: Remove this
 const fetchTodo = async () => {
@@ -42,6 +43,7 @@ const NavigationButtons = () => {
       <Button onClick={() => navigate("/post/1")}>포스트 상세 (예시: postId = 1)</Button>
       <Button onClick={() => navigate("/post/modify/1")}>포스트 수정 (예시: postId = 1)</Button>
       <Button onClick={() => navigate("/profile/1")}>마이페이지 (예시: userId = 1)</Button>
+      <NavigationBar />
     </div>
   );
 };
