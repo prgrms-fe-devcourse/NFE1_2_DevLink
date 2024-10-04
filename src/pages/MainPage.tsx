@@ -1,4 +1,5 @@
 import PostList from "../components/Post/PostList";
+import PostCreatePage from "./PostCreatePage";
 
 const MainPage = () => {
   const postId = "66fb4090efd4b211b0d0eb69";
@@ -8,6 +9,7 @@ const MainPage = () => {
     <>
       {/* <h2>Hello World, this is my first styled component!</h2> */}
       {/* <PostCard postId={postId} /> */}
+      {/* <PostCreatePage /> */}
       <PostList channelId={channelId} />
       {/* <PostDetailPage /> */}
     </>

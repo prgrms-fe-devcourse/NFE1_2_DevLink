@@ -155,7 +155,7 @@ const StyledCode = styled.code`
   font-family: "Courier New", Courier, monospace;
   font-size: 14px;
   line-height: 1.5;
-  color: #24292e;
+  color: #ffffff;
 `;
 
 // Post 타입 정의
@@ -248,9 +248,7 @@ const PostDetailPage: React.FC = () => {
 
   // 코드 복사 기능 추가
   const handleCopyCode = (code: string) => {
-    navigator.clipboard.writeText(code).then(() => {
-      console.log("코드가 복사되었습니다.");
-    });
+    navigator.clipboard.writeText(code);
   };
 
   //삭제 함수
@@ -297,7 +295,16 @@ const PostDetailPage: React.FC = () => {
   return (
     <PostWrapper>
       <PostHeader>
-        <Title>{JSON.parse(post.title).title}</Title>
+        <Title>
+          {(() => {
+            try {
+              const parsedTitle = JSON.parse(post.title);
+              return parsedTitle.title; // title 값만 반환
+            } catch (e) {
+              return post.title; // 단순 문자열일 경우 그대로 반환
+            }
+          })()}
+        </Title>
         <FirstLineWrapper>
           <AuthorDateWrapper>
             <Author onClick={() => navigate(`/profile/${post?.author._id}`)}>
@@ -323,7 +330,11 @@ const PostDetailPage: React.FC = () => {
           </ButtonsWrapper>
         </FirstLineWrapper>
       </PostHeader>
-      <Summary>{post?.summary ? post.summary : "작성된 한줄 요약이 없습니다."}</Summary>
+      <Summary>
+        {JSON.parse(post.title).summary
+          ? JSON.parse(post.title).summary
+          : "작성된 한줄 요약이 없습니다."}
+      </Summary>
 
       {post && (
         <Container>
@@ -331,11 +342,13 @@ const PostDetailPage: React.FC = () => {
             <LeftContainer>
               <CodeOutlined style={{ marginRight: "8px" }} />
               <Typography.Text style={{ color: "#B4B4B4" }}>
-                {post.language || "javascript"}
+                {post.language || "Component.tsx"}
               </Typography.Text>
             </LeftContainer>
             <RightContainer>
-              <CopyButton icon={<CopyOutlined />} onClick={() => handleCopyCode(post?.code || "")}>
+              <CopyButton
+                icon={<CopyOutlined />}
+                onClick={() => handleCopyCode(JSON.parse(post.title).code || "")}>
                 코드 복사
               </CopyButton>
               <SwitchContainer>
@@ -346,7 +359,11 @@ const PostDetailPage: React.FC = () => {
           </HeaderWrapper>
           {showPreview ? (
             <PreviewContent>
-              {post?.preview ? <CodeRenderer data={post.preview} /> : <p>렌더링이 실패했습니다.</p>}
+              {post?.code ? (
+                <CodeRenderer data={JSON.parse(post.title).code} />
+              ) : (
+                <p>렌더링이 실패했습니다.</p>
+              )}
             </PreviewContent>
           ) : (
             <Highlight code={JSON.parse(post.title).code} language={post?.language || "javascript"}>
@@ -366,7 +383,11 @@ const PostDetailPage: React.FC = () => {
         </Container>
       )}
 
-      <BodyText>{post?.bodytext ? post.bodytext : "작성된 본문 텍스트가 없습니다."}</BodyText>
+      <BodyText>
+        {JSON.parse(post.title).body
+          ? JSON.parse(post.title).body
+          : "작성된 본문 텍스트가 없습니다."}
+      </BodyText>
       <hr />
 
       <LikeButtonPostDetailPage

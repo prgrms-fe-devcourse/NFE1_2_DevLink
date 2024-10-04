@@ -12,6 +12,7 @@ import PostCreatePage from "./pages/PostCreatePage";
 import PostModifyPage from "./pages/PostModifyPage";
 import ProfilePage from "./pages/ProfilePage";
 import ReduxProvider from "./features/redux/Provider";
+import NotFoundPage from "./pages/NotFoundPage";
 
 const router = createBrowserRouter([
   // 로그인 페이지
@@ -48,6 +49,11 @@ const router = createBrowserRouter([
   {
     path: "/profile/:userId",
     element: <ProfilePage />,
+  },
+  // 404 페이지
+  {
+    path: "/*",
+    element: <NotFoundPage />,
   },
 ]);
 

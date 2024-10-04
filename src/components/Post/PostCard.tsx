@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Card } from "antd";
-import { HeartOutlined, UserOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import LikeButton from "./LikeButton";
 import { useNavigate } from "react-router-dom";
+import CodeRenderer from "./CodeRender";
 
 // Post 타입 정의
 interface Post {
@@ -15,6 +16,7 @@ interface Post {
   likes: any[]; //배열임
   comments: any[]; //배열임
   preview: string;
+  code: string;
   parsedTitle?: {
     title: string;
     code: string;
@@ -152,7 +154,23 @@ const PostCard: React.FC<PostCardProps> = ({ postId }) => {
 
   return (
     <StyledCard bodyStyle={{ padding: "0" }}>
-      <PreviewContainer>{post?.preview ? post.preview : "no image"}</PreviewContainer>
+      <PreviewContainer>
+        {(() => {
+          try {
+            // title을 JSON.parse로 파싱해서 code를 추출
+            const parsedTitle = JSON.parse(post.title);
+            return parsedTitle.code ? (
+              <CodeRenderer data={parsedTitle.code} />
+            ) : (
+              "No Preview Available"
+            );
+          } catch (e) {
+            console.error("JSON 파싱 오류: ", e);
+            return "No Preview Available"; // JSON 파싱에 실패할 경우
+          }
+        })()}
+      </PreviewContainer>
+
       <PostInfo>
         <FirstLine>
           <PostTitle>
@@ -175,7 +193,17 @@ const PostCard: React.FC<PostCardProps> = ({ postId }) => {
           <PostDate>{new Date(post.createdAt).toLocaleDateString("ko-KR")}</PostDate>
           <PostDate>{post.comments.length}개의 댓글</PostDate>
         </SecondLine>
-        <PostSummary>한줄요약 : 불러올 데이터가 없음 {post.summary}</PostSummary>
+        <PostSummary>
+          {(() => {
+            try {
+              const parsedTitle = JSON.parse(post.title.replace(/[\u0000-\u001F\u007F]/g, "")); // 제어 문자 제거
+              return parsedTitle.summary ? parsedTitle.summary : "작성된 한줄 요약이 없습니다.";
+            } catch (e) {
+              console.error("JSON 파싱 오류: ", e);
+              return "작성된 한줄 요약이 없습니다."; // JSON 파싱 실패 시
+            }
+          })()}
+        </PostSummary>
       </PostInfo>
     </StyledCard>
   );

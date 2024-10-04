@@ -63,7 +63,7 @@ const LikeButtonPostDetailPage: React.FC<LikeButtonPostDetailPageProps> = ({
           {
             method: "DELETE",
             headers,
-            body: JSON.stringify({ id: likeId }), // 좋아요 ID를 사용하여 삭제 요청
+            body: JSON.stringify({ id: likeId }), // Request Body에 likeId 전송
           }
         );
 
