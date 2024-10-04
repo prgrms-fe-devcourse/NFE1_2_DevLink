@@ -1,5 +1,15 @@
+import { PostProvider } from "../features/post-management/PostContext";
+import PostForm from "../features/post-management/PostForm";
+import PostLayout from "../components/post/PostLayout";
+
 const PostCreatePage = () => {
-  return <div>PostCreatePage</div>;
+  return (
+    <PostLayout>
+      <PostProvider>
+        <PostForm />
+      </PostProvider>
+    </PostLayout>
+  );
 };
 
 export default PostCreatePage;

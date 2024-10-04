@@ -2,6 +2,7 @@ import "normalize.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 import MainPage from "./pages/MainPage";
 import SignUpPage from "./pages/SignUpPage";
@@ -56,10 +57,14 @@ const router = createBrowserRouter([
   },
 ]);
 
+const queryClient = new QueryClient();
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ReduxProvider>
-      <RouterProvider router={router} />
-    </ReduxProvider>
+    <QueryClientProvider client={queryClient}>
+      <ReduxProvider>
+        <RouterProvider router={router} />
+      </ReduxProvider>
+    </QueryClientProvider>
   </StrictMode>
 );
