@@ -396,7 +396,7 @@ const PostDetailPage: React.FC = () => {
         style={{ marginBottom: "70px" }}
       />
 
-      {postId && <Comment postId={postId ?? ""} />}
+      {postId && post && <Comment postId={postId} post={post} />}
     </PostWrapper>
   );
 };

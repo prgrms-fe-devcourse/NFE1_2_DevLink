@@ -1,15 +1,21 @@
 import React, { useState } from "react";
 import { Button, message } from "antd";
-import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import styled from "styled-components";
 
+interface Post {
+  author: Author;
+  _id: string;
+}
+
+interface Author {
+  fullName: string;
+  email: string;
+  _id: string;
+}
+
 interface LikeButtonProps {
-  postId: string;
+  post: Post; // post 정보를 props로 받음
   initialLikeCount: number;
-  imageSize?: string;
-  fontSize?: string;
-  imageSrc?: string;
-  imageAlt?: string;
   style?: React.CSSProperties; // 스타일 속성 추가
 }
 
@@ -39,7 +45,7 @@ const LikeContainer = styled.div`
   }
 `;
 
-const LikeButton: React.FC<LikeButtonProps> = ({ postId, initialLikeCount, style }) => {
+const LikeButton: React.FC<LikeButtonProps> = ({ post, initialLikeCount, style }) => {
   const [likeCount, setLikeCount] = useState<number>(initialLikeCount);
   const [isLiked, setIsLiked] = useState<boolean>(false);
 
@@ -64,7 +70,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, initialLikeCount, style
       const response = await fetch("https://kdt.frontend.5th.programmers.co.kr:5004/likes/create", {
         method: "POST",
         headers,
-        body: JSON.stringify({ postId }),
+        body: JSON.stringify({ postId: post._id }), // post._id 사용
       });
 
       if (!response.ok) {
@@ -85,14 +91,14 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, initialLikeCount, style
       console.log("좋아요 처리 완료");
 
       // 알림 생성 요청
-      await createNotification(data._id, postId, jwtToken);
+      await createNotification(data._id, post, jwtToken);
     } catch (error) {
       console.error("좋아요 처리 중 오류 발생:", error);
     }
   };
 
   // 알림 생성 함수
-  const createNotification = async (likeId: string, postId: string, jwtToken: string) => {
+  const createNotification = async (likeId: string, post: Post, jwtToken: string) => {
     try {
       const response = await fetch(
         "https://kdt.frontend.5th.programmers.co.kr:5004/notifications/create",
@@ -104,7 +110,9 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, initialLikeCount, style
           },
           body: JSON.stringify({
             notificationType: "LIKE",
-            notificationTypeId: likeId, // 좋아요 ID를 알림에 사용
+            notificationTypeId: likeId,
+            userId: post.author._id, // 포스트 작성한 사람
+            postId: post._id,
           }),
         }
       );

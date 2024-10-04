@@ -124,7 +124,7 @@ const PostCard: React.FC<PostCardProps> = ({ postId }) => {
 
   //포스트 클릭 시 상세페이지로 네비게이터 함수
   const handlePostClick = (postId: string) => {
-    navigate(`post/${postId}`);
+    navigate(`/post/${postId}`); //절대 경로 사용
   };
 
   const fetchPost = async () => {
@@ -188,7 +188,7 @@ const PostCard: React.FC<PostCardProps> = ({ postId }) => {
               }
             })()}
           </PostTitle>
-          <LikeButton postId={post._id} initialLikeCount={post.likes.length} />
+          <LikeButton post={post} initialLikeCount={post.likes.length} />
         </FirstLine>
         <SecondLine>
           <AuthorContainer onClick={handleAuthorClick}>
