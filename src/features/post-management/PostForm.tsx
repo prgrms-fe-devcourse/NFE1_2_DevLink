@@ -1,10 +1,12 @@
 import { useEffect } from "react";
+import { message } from "antd";
 
 import { usePost } from "../../hooks/usePost";
 import { PostActionType } from "./type";
 import PostFormHeader from "./PostFormHeader";
 import PostFormMain from "./PostFormMain";
 import PostFormFooter from "./PostFormFooter";
+import { requestPostDetail } from "./api";
 
 interface PostFormProps {
   isEdit?: boolean;
@@ -17,15 +19,15 @@ const PostForm: React.FC<PostFormProps> = ({ isEdit, postId }) => {
   useEffect(() => {
     if (isEdit && postId) {
       dispatch({ type: PostActionType.SET_STATUS, payload: "modify" });
+      requestPostDetail(postId).then((payload) => {
+        if (!payload) {
+          return message.error("Error occurred: Failed to read a post");
+        }
 
-      dispatch({
-        type: PostActionType.SET_ALL,
-        payload: {
-          body: "새로운 데이타",
-          code: "200",
-          summary: "ㅁㄴㅇㄹㅁ",
-          title: "ㅁㄴㅇㄹ",
-        },
+        dispatch({
+          type: PostActionType.SET_ALL,
+          payload,
+        });
       });
     }
   }, [dispatch, isEdit, postId]);

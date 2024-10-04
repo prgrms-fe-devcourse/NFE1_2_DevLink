@@ -44,4 +44,7 @@ const initialPostState: PostState = {
   status: "create",
 };
 
-export { config, initialPostState, initialPostPayload, defaultCode };
+const SERVER_URL = "https://kdt.frontend.5th.programmers.co.kr:5004";
+const CHANNEL_ID = "66fa639af51c4a015245396f";
+
+export { config, initialPostState, initialPostPayload, defaultCode, CHANNEL_ID, SERVER_URL };

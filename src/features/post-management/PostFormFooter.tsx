@@ -1,12 +1,14 @@
-import { Button } from "antd";
+import { Button, message } from "antd";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { SaveOutlined } from "@ant-design/icons";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { usePost } from "../../hooks/usePost";
-import useLocalStorage from "../../hooks/useLocalStorage";
+import useLocalStorage, { LocalStorage } from "../../hooks/useLocalStorage";
 import { PostActionType, PostPayload, PostStatus } from "./type";
-import { config, initialPostPayload } from "./config";
+import { CHANNEL_ID, config, initialPostPayload, SERVER_URL } from "./config";
+import { sendPostRequest } from "./api";
 
 const label: Record<PostStatus, string> = {
   create: "포스트 생성",
@@ -14,18 +16,63 @@ const label: Record<PostStatus, string> = {
   preview: "포스트 작업",
 };
 
-const initPostPayload: PostPayload = {
-  title: "",
-  code: "",
-  body: "",
-  summary: "",
-};
+const localStorage = new LocalStorage();
 
 const PostFormFooter = () => {
+  const { postId } = useParams();
+  const navigate = useNavigate();
   const { state, dispatch } = usePost();
-  const [storedValue, setValue] = useLocalStorage<PostPayload>("post-form", initPostPayload);
+  const [storedValue, setValue] = useLocalStorage<PostPayload>("post-form", initialPostPayload);
 
+  const userToken = localStorage.getItem("userToken");
   const isSaved = Object.values(storedValue).some((value) => value !== "");
+
+  const handler: Record<PostStatus, () => void> = {
+    async create() {
+      if (userToken) {
+        const userId = await sendPostRequest({
+          url: `${SERVER_URL}/posts/create`,
+          method: "POST",
+          jwtToken: userToken,
+          payload: state.payload,
+          additionalData: {
+            channelId: CHANNEL_ID,
+          },
+        });
+
+        if (!userId) {
+          message.error("Error occurred: Failed to read userId");
+          return;
+        }
+
+        setValue(initialPostPayload);
+        navigate(`/profile/${userId}`, { replace: true });
+      }
+    },
+    async modify() {
+      if (userToken && postId) {
+        const userId = await sendPostRequest({
+          url: `${SERVER_URL}/posts/update`,
+          method: "PUT",
+          jwtToken: userToken,
+          payload: state.payload,
+          additionalData: {
+            postId,
+            channelId: CHANNEL_ID,
+          },
+        });
+
+        if (!userId) {
+          message.error("Error occurred: Failed to read userId");
+          return;
+        }
+
+        setValue(initialPostPayload);
+        navigate(`/profile/${userId}`, { replace: true });
+      }
+    },
+    preview() {},
+  };
 
   useEffect(() => {
     if (isSaved) {
@@ -33,10 +80,6 @@ const PostFormFooter = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    console.log(state);
-  }, [state]);
 
   return (
     <OuterContainer>
@@ -48,10 +91,7 @@ const PostFormFooter = () => {
         <Button
           type="primary"
           disabled={state.status === "preview"}
-          onClick={() => {
-            console.log(state.payload);
-            setValue(initialPostPayload);
-          }}>
+          onClick={handler[state.status]}>
           {label[state.status]}
         </Button>
       </InnerContainer>
@@ -68,20 +108,11 @@ const TemporaryStorageButton = ({
 }) => {
   const [clickStatus, setClickStatus] = useState(false);
 
-  const label = {
-    default: "임시 저장",
-    success: "저장 완료",
-  };
-  const buttonText = clickStatus ? label.success : label.default;
-
+  const buttonText = clickStatus ? "저장 완료" : "임시 저장";
   const onClickHandler = () => {
-    const ms = 1500;
-
     setClickStatus(true);
     onClick();
-    setTimeout(() => {
-      setClickStatus(false);
-    }, ms);
+    setTimeout(() => setClickStatus(false), 1500);
   };
 
   return (
