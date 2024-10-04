@@ -6,6 +6,7 @@ import userIcon from "../../assets/icons/userIcon.png";
 import signupIcon from "../../assets/icons/signupIcon.png";
 import signinIcon from "../../assets/icons/signinIcon.png";
 import styled from "styled-components";
+import { useTheme } from "../../theme/ThemeContext";
 
 const HeaderBackground = styled.div`
   width: 100%;
@@ -27,7 +28,7 @@ const LogoImg = styled.img`
   }
 `;
 
-const HeaderButtons = styled.div`
+const HeaderButtons = styled.div<{ darkMode: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -37,6 +38,9 @@ const HeaderButtons = styled.div`
   margin: auto;
   margin-right: 10px;
   font-size: 15px;
+
+  filter: ${({ darkMode }) => (darkMode ? "brightness(2)" : "brightness(1)")};
+  transition: filter 0.5s;
 
   img {
     width: 20px;
@@ -72,6 +76,8 @@ interface User {
 const Header: React.FC = () => {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [userToken, setUserToken] = useState<string | null>(null);
+
+  const { darkMode } = useTheme();
 
   // 상단 내비게이션 : 클릭 시 해당 주소로 이동
   const navigate = useNavigate();
@@ -139,7 +145,7 @@ const Header: React.FC = () => {
     <HeaderBackground>
       <LogoImg onClick={() => navigate("/")} src={devlinkLogo} alt="devlink-logo" />
       {isLogin ? (
-        <HeaderButtons>
+        <HeaderButtons darkMode={darkMode}>
           <label
             onClick={() => {
               onClickSignout();
@@ -150,12 +156,12 @@ const Header: React.FC = () => {
             onClick={() => {
               navigate(`/profile/${loginUser?._id}`);
             }}>
-            <img src={userIcon} alt="user-icon" />
+            <img src={userIcon} alt="user-icon" style={{ filter: "brightness(1)" }} />
             <div>{loginUser?.fullName}</div>
           </label>
         </HeaderButtons>
       ) : (
-        <HeaderButtons>
+        <HeaderButtons darkMode={darkMode}>
           <label
             onClick={() => {
               navigate("/signup");

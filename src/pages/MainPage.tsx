@@ -19,6 +19,7 @@ const MainPage = () => {
       <Header></Header>
       <SearchUser></SearchUser>
       <OnlineUser></OnlineUser>
+      <NavigationBar></NavigationBar>
     </main>
   );
 };
