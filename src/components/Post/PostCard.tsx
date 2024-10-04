@@ -15,6 +15,10 @@ interface Post {
   likes: any[]; //배열임
   comments: any[]; //배열임
   preview: string;
+  parsedTitle?: {
+    title: string;
+    code: string;
+  };
 }
 
 // Author 타입 정의
@@ -152,7 +156,14 @@ const PostCard: React.FC<PostCardProps> = ({ postId }) => {
       <PostInfo>
         <FirstLine>
           <PostTitle>
-            {post.title.length > 20 ? post.title.substring(0, 20) + "..." : post.title}
+            {(() => {
+              try {
+                const parsedTitle = JSON.parse(post.title);
+                return parsedTitle.title; // title 값만 반환
+              } catch (e) {
+                return post.title; // 단순 문자열일 경우 그대로 반환
+              }
+            })()}
           </PostTitle>
           <LikeButton postId={post._id} initialLikeCount={post.likes.length} />
         </FirstLine>

@@ -1,11 +1,12 @@
-// PostDetailPage.tsx
 import React, { useEffect, useState } from "react";
-import { Switch, Button, message } from "antd";
+import { Switch, Button, message, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
-import { UserOutlined, CopyOutlined } from "@ant-design/icons";
+import { UserOutlined, CopyOutlined, CodeOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import Comment from "../components/Post/Comment";
 import LikeButtonPostDetailPage from "../components/Post/LikeButtonPostDetailPage";
+import { Highlight } from "prism-react-renderer";
+import CodeRenderer from "../components/Post/CodeRender";
 
 // Styled Components for layout and styles
 const PostWrapper = styled.div`
@@ -59,7 +60,6 @@ const StyledDate = styled.p`
 const ButtonsWrapper = styled.div`
   display: flex;
   align-items: center;
-  /* padding-bottom: 15px; */
 `;
 
 const StyledButton = styled(Button)`
@@ -72,7 +72,6 @@ const StyledButton = styled(Button)`
 
 const Summary = styled.p`
   font-size: 18px;
-  /* font-style: italic; */
   color: #666;
   margin-bottom: 20px;
 `;
@@ -84,66 +83,56 @@ const BodyText = styled.p`
   line-height: 1.5;
 `;
 
-const CodeSection = styled.div`
+const Container = styled.div`
   width: 100%;
   height: 619px;
   flex-direction: column;
-  background-color: #f0f0f0;
-  margin-top: 7px;
-  box-sizing: border-box; /* 추가 */
+  background-color: #f6f8fa;
   border-radius: 8px;
+  margin: 16px 0;
+  box-sizing: border-box;
   overflow: hidden;
 `;
 
-const CodeHeader = styled.div`
-  background-color: #888888;
-  color: white;
+const HeaderWrapper = styled.div`
   padding: 10px 20px 10px 20px;
+  background-color: #2f2f2f;
+  color: #b4b4b4;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   flex-shrink: 0;
 `;
 
-// 오른쪽 영역을 묶을 컨테이너
+const LeftContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 const RightContainer = styled.div`
   display: flex;
   align-items: center;
 `;
 
-// 스위치와 텍스트를 담을 컨테이너
-const SwitchContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-left: 10px; /* 복사 버튼과의 간격 추가 */
-`;
-
-const SwitchText = styled.span`
-  margin-right: 8px;
-  font-size: 18px;
-`;
-
-const HeaderTitle = styled.span`
-  font-size: 16px;
-`;
-
 const CopyButton = styled(Button)`
-  background-color: #888888;
-  color: white;
+  background-color: #2f2f2f;
+  color: #b4b4b4;
   border: none;
   &:hover {
     background-color: #777;
   }
 `;
 
-const CodeContent = styled.pre`
-  padding: 20px;
-  margin: 0;
-  font-size: 14px;
-  overflow: auto;
-  background-color: inherit;
-  flex-grow: 1;
+const SwitchContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: 10px;
+`;
+
+const SwitchText = styled.span`
+  margin-right: 8px;
+  font-size: 18px;
 `;
 
 const PreviewContent = styled.div`
@@ -154,40 +143,50 @@ const PreviewContent = styled.div`
   flex-grow: 1;
 `;
 
-// Author 타입 정의
+const StyledPre = styled.pre`
+  margin: 0;
+  padding: 16px;
+  overflow-x: auto;
+  width: 100%;
+  height: 100%;
+`;
+
+const StyledCode = styled.code`
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #24292e;
+`;
+
+// Post 타입 정의
 interface Author {
   fullName: string;
   email: string;
   _id: string;
 }
 
-// Post 타입 정의
 interface Post {
   _id: string;
   title: string;
   author: Author;
-  createdAt: string; // 작성 날짜 추가
+  createdAt: string;
   bodytext: string;
   summary: string;
-  likes: any[]; //배열임
-  comments: any[]; //배열임
+  likes: any[];
+  comments: any[];
   code: string;
   preview: string;
+  language: string;
 }
 
-// PostCardProps 타입 정의
-// interface PostDetailPageProps {
-//   postId: string;
-// }
-
 const PostDetailPage: React.FC = () => {
-  const [post, setPost] = useState<Post | null>(null); // API에서 가져온 데이터를 저장할 state
-  const [loading, setLoading] = useState<boolean>(true); // 로딩 상태 관리
-  const [error, setError] = useState<string | null>(null); // 에러 상태 관리
-  const [showPreview, setShowPreview] = useState<boolean>(true); // 토글 스위치 상태 관리
+  const [post, setPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState<boolean>(true);
 
-  const { postId } = useParams(); // URL에서 postId를 추출
+  const { postId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -200,16 +199,22 @@ const PostDetailPage: React.FC = () => {
           throw new Error("데이터를 불러오는 데 실패했습니다.");
         }
         const data = await response.json();
-        setPost(data); // 데이터를 state에 저장
+
+        const postWithCode = {
+          ...data,
+          code: data.code || `function tempFunction() { console.log('임시 코드입니다.'); }`,
+        };
+
+        setPost(postWithCode);
       } catch (err: any) {
-        setError(err.message); // 에러 처리
+        setError(err.message);
       } finally {
-        setLoading(false); // 로딩 완료
+        setLoading(false);
       }
     };
 
-    fetchPost(); // 컴포넌트가 마운트될 때 API 요청
-  }, []);
+    fetchPost();
+  }, [postId]);
 
   //로그인한 사용자 ID 호출 (본인일 때 버튼 활성화 때문)
   useEffect(() => {
@@ -226,37 +231,19 @@ const PostDetailPage: React.FC = () => {
 
         if (response.ok) {
           const userData = await response.json();
-          setCurrentUserId(userData._id); //로그인한 사용자의 ID로 설정
+          setCurrentUserId(userData._id);
         }
       } catch (error) {
-        console.error("사용자 정보를 가져오는 대 실패했습니다", error);
+        console.error("사용자 정보를 가져오는 데 실패했습니다", error);
       }
     };
 
     fetchUserData();
   }, []);
 
-  if (loading) {
-    return <div>로딩 중...</div>; // 데이터를 가져오는 동안 로딩 메시지
-  }
-
-  if (error) {
-    return <div>에러 발생: {error}</div>; // 에러 발생 시 메시지
-  }
-
   // 토글 스위치 상태 변경 핸들러
   const handleToggle = (checked: boolean) => {
     setShowPreview(checked); // 스위치 상태에 따라 showPreview 상태를 업데이트
-  };
-
-  //작성자 클릭 시 마이페이지 네비게이터
-  const handleAuthorClick = () => {
-    navigate(`/profile/${post?.author._id}`);
-  };
-
-  //수정 버튼 네비게이터
-  const handleModify = () => {
-    navigate(`/post/modify/:postId`);
   };
 
   // 코드 복사 기능 추가
@@ -299,25 +286,31 @@ const PostDetailPage: React.FC = () => {
     }
   };
 
+  if (loading) {
+    return <div>로딩 중...</div>;
+  }
+
+  if (error) {
+    return <div>에러 발생: {error}</div>;
+  }
+
   return (
     <PostWrapper>
-      {/* 제목, 작성자, 작성일 */}
       <PostHeader>
-        <Title>{post?.title}</Title>
+        <Title>{JSON.parse(post.title).title}</Title>
         <FirstLineWrapper>
           <AuthorDateWrapper>
-            <Author onClick={handleAuthorClick}>
+            <Author onClick={() => navigate(`/profile/${post?.author._id}`)}>
               <UserOutlined />
               {post?.author.fullName}
             </Author>
             <StyledDate>{post && new Date(post.createdAt).toLocaleDateString("ko-KR")}</StyledDate>
           </AuthorDateWrapper>
 
-          {/* 수정, 삭제 버튼 */}
           <ButtonsWrapper>
             {post?.author._id === currentUserId && (
               <>
-                <StyledButton type="text" onClick={handleModify}>
+                <StyledButton type="text" onClick={() => navigate(`/post/modify/${postId}`)}>
                   수정
                 </StyledButton>
                 {post?._id && (
@@ -330,47 +323,50 @@ const PostDetailPage: React.FC = () => {
           </ButtonsWrapper>
         </FirstLineWrapper>
       </PostHeader>
-      <Summary>한줄 요약 {post?.summary}</Summary>
+      <Summary>{post?.summary ? post.summary : "작성된 한줄 요약이 없습니다."}</Summary>
 
-      {/* 토글 상태에 따른 이미지 표시 */}
-      {showPreview ? (
-        <CodeSection>
-          <CodeHeader>
-            <HeaderTitle>component</HeaderTitle>
+      {post && (
+        <Container>
+          <HeaderWrapper>
+            <LeftContainer>
+              <CodeOutlined style={{ marginRight: "8px" }} />
+              <Typography.Text style={{ color: "#B4B4B4" }}>
+                {post.language || "javascript"}
+              </Typography.Text>
+            </LeftContainer>
             <RightContainer>
               <CopyButton icon={<CopyOutlined />} onClick={() => handleCopyCode(post?.code || "")}>
                 코드 복사
               </CopyButton>
-              {/* 토글 스위치 */}
               <SwitchContainer>
                 <SwitchText>{showPreview ? "Preview" : "Code"}</SwitchText>
                 <Switch checked={showPreview} onChange={handleToggle} />
               </SwitchContainer>
             </RightContainer>
-          </CodeHeader>
-          <PreviewContent>
-            {post?.preview ? <p>{post.preview}</p> : <p>렌더링이 실패했습니다.</p>}
-          </PreviewContent>
-        </CodeSection>
-      ) : (
-        <CodeSection>
-          <CodeHeader>
-            <HeaderTitle>component</HeaderTitle>
-            <RightContainer>
-              <CopyButton icon={<CopyOutlined />} onClick={() => handleCopyCode(post?.code || "")}>
-                코드 복사
-              </CopyButton>
-              {/* 토글 스위치 */}
-              <SwitchContainer>
-                <SwitchText>{showPreview ? "Preview" : "Code"}</SwitchText>
-                <Switch checked={showPreview} onChange={handleToggle} />
-              </SwitchContainer>
-            </RightContainer>
-          </CodeHeader>
-          <CodeContent>{post?.code || "코드가 없습니다."}</CodeContent>
-        </CodeSection>
+          </HeaderWrapper>
+          {showPreview ? (
+            <PreviewContent>
+              {post?.preview ? <CodeRenderer data={post.preview} /> : <p>렌더링이 실패했습니다.</p>}
+            </PreviewContent>
+          ) : (
+            <Highlight code={JSON.parse(post.title).code} language={post?.language || "javascript"}>
+              {({ className, style, tokens, getLineProps, getTokenProps }) => (
+                <StyledPre className={className} style={style}>
+                  {tokens.map((line, i) => (
+                    <div key={i} {...getLineProps({ line, key: i })}>
+                      {line.map((token, key) => (
+                        <StyledCode key={key} {...getTokenProps({ token, key })} />
+                      ))}
+                    </div>
+                  ))}
+                </StyledPre>
+              )}
+            </Highlight>
+          )}
+        </Container>
       )}
-      <BodyText>본문 텍스트 {post?.bodytext}</BodyText>
+
+      <BodyText>{post?.bodytext ? post.bodytext : "작성된 본문 텍스트가 없습니다."}</BodyText>
       <hr />
 
       <LikeButtonPostDetailPage
@@ -383,4 +379,5 @@ const PostDetailPage: React.FC = () => {
     </PostWrapper>
   );
 };
+
 export default PostDetailPage;

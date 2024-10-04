@@ -4,6 +4,7 @@ import { Typography, Switch, Button } from "antd";
 import { CodeOutlined, CopyOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { Highlight } from "prism-react-renderer";
+import CodeRenderer from "./CodeRender";
 // import vsLight from "prism-react-renderer/themes/vsLight";
 
 // import { vsDark } from "prism-react-renderer/themes";
@@ -28,7 +29,7 @@ interface ContainerProps {
   $language?: string; // $ prefix로 변경하여 DOM에 전달되지 않도록 함
 }
 
-const CodeBlock: React.FC<CodeBlockProps> = ({ code, language = "javascript", post }) => {
+const CodeBlock: React.FC<CodeBlockProps> = ({ code = "", language = "javascript", post }) => {
   const [showPreview, setShowPreview] = useState<boolean>(true); // 토글 스위치 상태 관리
 
   // 코드 복사 기능 추가
@@ -63,7 +64,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ code, language = "javascript", po
       </HeaderWrapper>
       {showPreview ? (
         <PreviewContent>
-          {post?.preview ? <p>{post.preview}</p> : <p>렌더링이 실패했습니다.</p>}
+          {post?.preview ? <CodeRenderer data={post.preview} /> : <p>렌더링이 실패했습니다.</p>}
         </PreviewContent>
       ) : (
         <Highlight code={code} language={language}>
@@ -79,9 +80,6 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ code, language = "javascript", po
             </StyledPre>
           )}
         </Highlight>
-        // <StyledPre>
-        //   <StyledCode>{code}</StyledCode>
-        // </StyledPre>
       )}
     </Container>
   );
