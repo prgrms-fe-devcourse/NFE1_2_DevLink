@@ -13,6 +13,7 @@ import PostModifyPage from "./pages/PostModifyPage";
 import ProfilePage from "./pages/ProfilePage";
 import ReduxProvider from "./features/redux/Provider";
 import NotFoundPage from "./pages/NotFoundPage";
+import { ThemeProvider } from "./theme/ThemeContext";
 
 const router = createBrowserRouter([
   // 로그인 페이지
@@ -61,10 +62,12 @@ const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <ReduxProvider>
-        <RouterProvider router={router} />
-      </ReduxProvider>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ReduxProvider>
+          <RouterProvider router={router} />
+        </ReduxProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   </StrictMode>
 );

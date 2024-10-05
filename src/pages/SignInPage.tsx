@@ -1,16 +1,16 @@
 import styled from "styled-components";
 import LoginBox from "../components/LoginBox";
-
+import { useTheme } from "../theme/ThemeContext";
 interface UserData {
   email: string;
   password: string;
 }
 
 // 로그인 페이지 스타일 지정
-const PageStyle = styled.div`
+const PageStyle = styled.div<{ darkMode: boolean }>`
   width: 1920px;
   height: 1080px;
-  background-color: #f9f9f9;
+  background-color: ${({ darkMode }) => (darkMode ? "#44474e" : "#F9F9F9")};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23,8 +23,9 @@ const userData: UserData = {
 };
 
 const SignInPage = () => {
+  const { darkMode } = useTheme();
   return (
-    <PageStyle>
+    <PageStyle darkMode={darkMode}>
       {/* SignInPage */}
       <LoginBox userData={userData}></LoginBox>
     </PageStyle>
