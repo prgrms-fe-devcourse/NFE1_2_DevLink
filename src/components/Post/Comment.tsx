@@ -3,19 +3,23 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button, Input, message } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../../theme/ThemeContext";
 
 // Styled Components
 const CommentWrapper = styled.div`
   margin-top: 20px;
 `;
 
-const Title = styled.div`
+const Title = styled.div<{ darkMode: boolean }>`
   display: flex;
   align-items: center;
   gap: 17px;
   margin-bottom: 20px;
   img {
     margin: 0;
+    /* darkMode 값에 따른 밝기 조절 */
+    filter: ${({ darkMode }) => (darkMode ? "brightness(15)" : "brightness(1)")};
+    transition: filter 0.5s;
   }
 
   h2 {
@@ -54,7 +58,7 @@ const CommentItem = styled.li`
   align-items: flex-start;
 `;
 
-const CommentContent = styled.div`
+const CommentContent = styled.div<{ darkMode: boolean }>`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -72,6 +76,7 @@ const CommentContent = styled.div`
 
   p {
     margin: 0;
+    color: ${({ darkMode }) => (darkMode ? "white" : "black")};
   }
 
   .createdAt {
@@ -89,6 +94,7 @@ const CommentUserIcon = styled.div`
 
   span {
     font-size: 18px;
+    color: "black";
   }
 `;
 
@@ -128,6 +134,8 @@ const CommentComponent: React.FC<CommentComponentProps> = ({ postId, post }) => 
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const navigate = useNavigate();
+
+  const { darkMode } = useTheme();
 
   // 댓글 목록을 GET /posts/{postId}  API를 통해 불러오기
   const fetchComments = async () => {
@@ -287,7 +295,7 @@ const CommentComponent: React.FC<CommentComponentProps> = ({ postId, post }) => 
 
   return (
     <CommentWrapper>
-      <Title>
+      <Title darkMode={darkMode}>
         <img src="/comment_icon.png" alt="댓글 아이콘" />
         <h2>댓글</h2>
       </Title>
@@ -308,12 +316,12 @@ const CommentComponent: React.FC<CommentComponentProps> = ({ postId, post }) => 
         {comments.map((comment) => (
           <CommentItem key={comment._id}>
             <CommentUserIcon onClick={() => handleAuthorClick(comment.author._id)}>
-              <UserOutlined style={{ fontSize: "50px" }} />
-              <span>{comment.author.fullName}</span>
+              <UserOutlined style={{ fontSize: "50px", color: "black" }} />
+              <span style={{ color: "black" }}>{comment.author.fullName}</span>
             </CommentUserIcon>
-            <CommentContent>
+            <CommentContent darkMode={darkMode}>
               <div className="comment-top">
-                <p>{comment.comment}</p>
+                <p style={{ color: "black" }}>{comment.comment}</p>
               </div>
               <p className="createdAt">{new Date(comment.createdAt).toLocaleDateString("ko-KR")}</p>
             </CommentContent>

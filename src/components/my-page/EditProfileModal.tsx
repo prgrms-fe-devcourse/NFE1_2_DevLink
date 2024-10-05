@@ -2,6 +2,7 @@
 import React from "react";
 import styled from "styled-components";
 import devlinkLogo from "../../assets/images/devlinkLogo.png";
+import { useTheme } from "../../theme/ThemeContext";
 
 // 모달 스타일
 const EditProfileModal = styled.div`
@@ -32,12 +33,13 @@ const InputStyle = styled.input`
 `;
 
 // 요구 사항 스타일
-const Requirements = styled.div`
+const Requirements = styled.div<{ darkMode: boolean }>`
   margin-left: 5px;
   margin-top: 5px;
   width: 300px;
   font-size: 12px;
   opacity: 0.6;
+  color: black;
 `;
 
 // 제출 박스 스타일
@@ -54,6 +56,7 @@ const SubmitBox = styled.div`
     border: 1px solid lightgray;
     background-color: #fff;
     cursor: pointer;
+    color: black;
     &:hover {
       background-color: #cccccc;
     }
@@ -171,6 +174,8 @@ const EditProfileModalComponent: React.FC<EditProfileModalProps> = ({
 
   if (!isOpen) return null;
 
+  const { darkMode } = useTheme();
+
   return (
     <EditProfileModal>
       <LogoStyle src={devlinkLogo} alt="devlinkLogo" />
@@ -182,7 +187,7 @@ const EditProfileModalComponent: React.FC<EditProfileModalProps> = ({
           value={inputFullName}
           onChange={(e) => setInputFullName(e.target.value)}
         />
-        <Requirements>이름은 1~8자 사이여야 합니다.</Requirements>
+        <Requirements darkMode={darkMode}>이름은 1~8자 사이여야 합니다.</Requirements>
 
         <InputStyle
           type="password"
@@ -191,7 +196,9 @@ const EditProfileModalComponent: React.FC<EditProfileModalProps> = ({
           value={inputPassword}
           onChange={(e) => setInputPassword(e.target.value)}
         />
-        <Requirements>비밀번호는 영문+특수문자+숫자를 포함한 8~16자여야 합니다.</Requirements>
+        <Requirements darkMode={darkMode}>
+          비밀번호는 영문+특수문자+숫자를 포함한 8~16자여야 합니다.
+        </Requirements>
 
         <InputStyle
           type="password"
@@ -200,7 +207,9 @@ const EditProfileModalComponent: React.FC<EditProfileModalProps> = ({
           value={inputCheckPassword}
           onChange={(e) => setInputCheckPassword(e.target.value)}
         />
-        <Requirements>비밀번호는 영문+특수문자+숫자를 포함한 8~16자여야 합니다.</Requirements>
+        <Requirements darkMode={darkMode}>
+          비밀번호는 영문+특수문자+숫자를 포함한 8~16자여야 합니다.
+        </Requirements>
 
         <SubmitBox>
           <button type="button" onClick={onClose}>
