@@ -21,7 +21,6 @@ const Navcontainer = styled.div`
   width: 200px;
   height: 100vh;
   overflow: hidden;
-  white-space: nowrap;
   transition: 1s;
   height: 100vh; /* 화면 전체 높이 */
   position: fixed; /* 고정 위치 */
