@@ -19,9 +19,9 @@ const Navcontainer = styled.div`
   float: left;
   background-color: #fff;
   width: 200px;
-  height: 100%;
-  //이거 어찌 해결해야 하나.. 트랜지션..
+  height: 100vh;
   overflow: hidden;
+  white-space: nowrap;
   transition: 1s;
 
   &.closeNav {
@@ -66,6 +66,11 @@ const Button = styled.button`
   }
 `;
 
+interface Profile {
+  _id: string;
+  user: string;
+}
+
 const NavigationBar = () => {
   const navigate = useNavigate();
   //네이게이션바 열고 닫기
@@ -73,25 +78,38 @@ const NavigationBar = () => {
   //알람과 포스트검색 패널 열고 닫기
   const [notiOpen, setNotiOpen] = useState(false);
   const [postOpen, setPostOpen] = useState(false);
-  //seen값
-  const [isSeen, setisSeen] = useState(false);
+  const [profile, setProfile] = useState<Profile>();
 
-  ////////////////////////////////////////////
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY2ZmE0ZWQ0ZDQ3NWE4N2RlMGFlMWE1NSIsImVtYWlsIjoidGVzdDA0QGFhYS5jb20ifSwiaWF0IjoxNzI3NjgwMzEzfQ.7rI5mmvcEa1wvVG2Qb2xhIz2ohiaC2XYwtakrMPHgLQ";
-  // 라벨 누르면 seen값  true로 바꾸는 fetch
+  const token = localStorage.getItem("userToken");
   useEffect(() => {
-    fetch("https://kdt.frontend.5th.programmers.co.kr:5004/notifications/seen", {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => setisSeen(data))
-      .catch((error) => console.error("Error:", error));
-  }, []);
+    const fetchData = async () => {
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+
+      try {
+        const response = await fetch("https://kdt.frontend.5th.programmers.co.kr:5004/auth-user", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch user profile");
+        }
+
+        const data: Profile = await response.json();
+        setProfile(data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    fetchData();
+  }, [token]);
 
   const notiHandler = () => {
     if (notiOpen) {
@@ -134,7 +152,7 @@ const NavigationBar = () => {
         </Button>
 
         <Button onClick={notiHandler} className={showNav ? "" : "btncloseNav"}>
-          <Alarm isClosed={!showNav} isSeen={isSeen}>
+          <Alarm isClosed={!showNav}>
             <img src={alarm} alt="alarm" />
           </Alarm>
           <span>알림</span>
@@ -146,7 +164,9 @@ const NavigationBar = () => {
         </Button>
 
         {/* 유저아이디로 다시 지정해야함 */}
-        <Button onClick={() => navigate("/profile/1")} className={showNav ? "" : "btncloseNav"}>
+        <Button
+          onClick={() => profile && navigate(`/profile/${profile._id}`)}
+          className={showNav ? "" : "btncloseNav"}>
           <img src={mypage} alt="mypage" />
           <span>마이페이지</span>
         </Button>

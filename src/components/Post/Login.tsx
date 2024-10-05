@@ -23,7 +23,7 @@ const Login: React.FC = () => {
       console.log("로그인 성공:", data.token);
 
       // 토큰 저장
-      localStorage.setItem("jwtToken", data.token);
+      localStorage.setItem("userToken", data.token);
     } catch (error) {
       console.error("로그인 중 오류 발생:", error);
     }

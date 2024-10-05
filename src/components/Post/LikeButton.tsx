@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button, message } from "antd";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import styled from "styled-components";
+import Notification_API from "../../features/Navigations/Notification_API";
 
 interface LikeButtonProps {
   postId: string;
@@ -11,6 +12,11 @@ interface LikeButtonProps {
   imageSrc?: string;
   imageAlt?: string;
   style?: React.CSSProperties; // 스타일 속성 추가
+}
+//알림 생성을 위한 likes의 아이디값 받아오기
+interface LikesData {
+  likesId: string;
+  postId: string;
 }
 
 // style(포스트카드용)
@@ -42,6 +48,8 @@ const LikeContainer = styled.div`
 const LikeButton: React.FC<LikeButtonProps> = ({ postId, initialLikeCount, style }) => {
   const [likeCount, setLikeCount] = useState<number>(initialLikeCount);
   const [isLiked, setIsLiked] = useState<boolean>(false);
+  //알림 생성을 위한 likes의 아이디값 받아오기
+  const [likesId, setLikesId] = useState<LikesData | null>();
 
   // 좋아요 처리 함수
   const handleLike = async (e: React.MouseEvent) => {
@@ -66,6 +74,10 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, initialLikeCount, style
         body: JSON.stringify({ postId }),
       });
 
+      //알림 생성을 위한 likes의 포스트아이디값 받아오기
+      const data = await response.json();
+      setLikesId(data);
+
       if (!response.ok) {
         // 서버가 502 또는 다른 에러를 반환할 때
         if (response.status === 502) {
@@ -78,7 +90,6 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, initialLikeCount, style
         return;
       }
 
-      const data = await response.json();
       setLikeCount((prev) => prev + 1);
       setIsLiked(true);
       console.log("좋아요 처리 완료");
@@ -100,6 +111,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, initialLikeCount, style
         )}
       </button>
       <p>좋아요 {likeCount}개</p>
+      {likesId && <Notification_API likesId={likesId} />}
     </LikeContainer>
   );
 };
