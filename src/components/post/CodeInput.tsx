@@ -62,7 +62,7 @@ const CodeInput: React.FC<CodeInputProps> = ({ onChange, value, config = default
           </Button>
         </Tooltip>
       </Flex>
-      <CodeEditor onChange={onChange} data={value} />
+      <CodeEditor onChange={onChange} data={value} ref={editorRef} />
     </Container>
   );
 };
