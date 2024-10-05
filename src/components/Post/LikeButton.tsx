@@ -53,7 +53,8 @@ const LikeButton: React.FC<LikeButtonProps> = ({ post, initialLikeCount, style }
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation(); // 이벤트 전파 중지 (이벤트 버블링)
 
-    const jwtToken = localStorage.getItem("jwtToken");
+    const jwtToken = localStorage.getItem("userToken");
+    console.log("JWT 토큰: ", jwtToken);
 
     if (!jwtToken) {
       message.error("로그인이 필요합니다.");

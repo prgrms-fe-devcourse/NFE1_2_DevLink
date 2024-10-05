@@ -151,7 +151,7 @@ const CommentComponent: React.FC<CommentComponentProps> = ({ postId, post }) => 
 
   // 댓글 작성 함수
   const handleAddComment = async () => {
-    const jwtToken = localStorage.getItem("jwtToken");
+    const jwtToken = localStorage.getItem("userToken");
     if (!jwtToken) {
       message.error("로그인이 필요합니다.");
       return;

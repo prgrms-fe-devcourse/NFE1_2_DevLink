@@ -43,7 +43,7 @@ const LikeButtonPostDetailPage: React.FC<LikeButtonPostDetailPageProps> = ({
 
   // 좋아요 처리 함수
   const handleLike = async () => {
-    const jwtToken = localStorage.getItem("jwtToken");
+    const jwtToken = localStorage.getItem("userToken");
 
     if (!jwtToken) {
       message.error("로그인이 필요합니다.");
