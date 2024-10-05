@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, message } from "antd";
+import { message } from "antd";
 import styled from "styled-components";
 
 interface Post {
@@ -19,7 +19,7 @@ interface LikeButtonProps {
   style?: React.CSSProperties; // 스타일 속성 추가
 }
 
-// style(포스트카드용)
+// 스타일 (포스트카드용)
 const LikeContainer = styled.div`
   display: flex;
   align-items: center; /*세로축*/
@@ -48,13 +48,13 @@ const LikeContainer = styled.div`
 const LikeButton: React.FC<LikeButtonProps> = ({ post, initialLikeCount, style }) => {
   const [likeCount, setLikeCount] = useState<number>(initialLikeCount);
   const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [likeId, setLikeId] = useState<string | null>(null); // 좋아요 ID 저장
 
-  // 좋아요 처리 함수
+  // 좋아요 처리 및 취소 함수
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation(); // 이벤트 전파 중지 (이벤트 버블링)
 
     const jwtToken = localStorage.getItem("userToken");
-    console.log("JWT 토큰: ", jwtToken);
 
     if (!jwtToken) {
       message.error("로그인이 필요합니다.");
@@ -67,32 +67,51 @@ const LikeButton: React.FC<LikeButtonProps> = ({ post, initialLikeCount, style }
     };
 
     try {
-      // 좋아요 요청
-      const response = await fetch("https://kdt.frontend.5th.programmers.co.kr:5004/likes/create", {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ postId: post._id }), // post._id 사용
-      });
+      if (isLiked && likeId) {
+        // 좋아요 취소 처리
+        const response = await fetch(
+          `https://kdt.frontend.5th.programmers.co.kr:5004/likes/delete`,
+          {
+            method: "DELETE",
+            headers,
+            body: JSON.stringify({ id: likeId }), // 좋아요 ID를 사용하여 삭제 요청
+          }
+        );
 
-      if (!response.ok) {
-        // 서버 응답 상태에 따라 에러 처리
-        if (response.status === 502) {
-          console.error("서버 문제로 요청을 처리할 수 없습니다 (502 Bad Gateway).");
-        } else if (response.status === 401) {
-          console.error("인증 실패: JWT 토큰이 유효하지 않거나 만료되었습니다.");
-        } else {
-          console.error(`에러 발생: ${response.status} - ${response.statusText}`);
+        if (!response.ok) {
+          message.error(`좋아요 취소 실패: ${response.statusText}`);
+          return;
         }
-        return;
+
+        setLikeCount((prev) => prev - 1);
+        setIsLiked(false);
+        setLikeId(null); // 좋아요 ID 초기화
+        console.log("좋아요 취소 처리 완료");
+      } else {
+        // 좋아요 처리
+        const response = await fetch(
+          "https://kdt.frontend.5th.programmers.co.kr:5004/likes/create",
+          {
+            method: "POST",
+            headers,
+            body: JSON.stringify({ postId: post._id }), // post._id 사용
+          }
+        );
+
+        if (!response.ok) {
+          message.error(`좋아요 처리 실패: ${response.statusText}`);
+          return;
+        }
+
+        const data = await response.json(); // 좋아요 처리 결과
+        setLikeCount((prev) => prev + 1);
+        setIsLiked(true);
+        setLikeId(data._id); // 좋아요 ID 저장
+        console.log("좋아요 처리 완료");
+
+        // 알림 생성 요청
+        await createNotification(data._id, post, jwtToken);
       }
-
-      const data = await response.json(); // 좋아요 처리 결과
-      setLikeCount((prev) => prev + 1);
-      setIsLiked(true);
-      console.log("좋아요 처리 완료");
-
-      // 알림 생성 요청
-      await createNotification(data._id, post, jwtToken);
     } catch (error) {
       console.error("좋아요 처리 중 오류 발생:", error);
     }
@@ -132,7 +151,6 @@ const LikeButton: React.FC<LikeButtonProps> = ({ post, initialLikeCount, style }
     <LikeContainer style={style}>
       <button
         onClick={handleLike}
-        disabled={isLiked}
         style={{ border: "none", background: "transparent", cursor: "pointer" }}>
         {isLiked ? (
           <img src="/heart_icon_fill.png" alt="검정하트 24px" />

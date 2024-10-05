@@ -23,10 +23,14 @@ const Navcontainer = styled.div`
   //이거 어찌 해결해야 하나.. 트랜지션..
   overflow: hidden;
   transition: 1s;
+  height: 100vh; /* 화면 전체 높이 */
+  position: fixed; /* 고정 위치 */
 
   &.closeNav {
     width: 105px;
     transition: 0.5s;
+    height: 100vh; /* 화면 전체 높이 */
+    position: fixed; /* 고정 위치 */
     img {
       margin: 0;
     }
