@@ -7,6 +7,7 @@ import Comment from "../components/Post/Comment";
 import LikeButtonPostDetailPage from "../components/Post/LikeButtonPostDetailPage";
 import { Highlight } from "prism-react-renderer";
 import CodeRenderer from "../components/Post/CodeRender";
+import { useTheme } from "../theme/ThemeContext";
 
 // Styled Components for layout and styles
 const PostWrapper = styled.div`
@@ -70,9 +71,9 @@ const StyledButton = styled(Button)`
   min-height: 36px;
 `;
 
-const Summary = styled.p`
+const Summary = styled.p<{ darkMode: boolean }>`
   font-size: 18px;
-  color: #666;
+  color: ${({ darkMode }) => (darkMode ? "white" : "black")}
   margin-bottom: 20px;
 `;
 
@@ -188,6 +189,8 @@ const PostDetailPage: React.FC = () => {
 
   const { postId } = useParams();
   const navigate = useNavigate();
+
+  const { darkMode } = useTheme();
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -335,7 +338,7 @@ const PostDetailPage: React.FC = () => {
           </ButtonsWrapper>
         </FirstLineWrapper>
       </PostHeader>
-      <Summary>
+      <Summary darkMode={darkMode}>
         {JSON.parse(post.title).summary
           ? JSON.parse(post.title).summary
           : "작성된 한줄 요약이 없습니다."}

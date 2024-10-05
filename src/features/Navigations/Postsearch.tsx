@@ -3,8 +3,9 @@ import inputdelete from "../../assets/images/inputdelete.png";
 import { useEffect, useState } from "react";
 import user_icon from "../../assets/images/user_icon.png";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../../theme/ThemeContext";
 
-const PostsearchPanel = styled.div<{ postClosed: boolean }>`
+const PostsearchPanel = styled.div<{ postClosed: boolean; darkMode: boolean }>`
   position: absolute;
   background-color: white;
   width: 397px;
@@ -18,6 +19,7 @@ const PostsearchPanel = styled.div<{ postClosed: boolean }>`
   transition: ${(props) => (props.postClosed ? "0.5s" : "0.1s")};
   border-radius: 15px;
   box-shadow: 0px 0px 10px black;
+  background-color: ${({ darkMode }) => (darkMode ? "#6c707a" : "#F9F9F9")};
 
   /*&::-webkit-scrollbar {
     display: none;
@@ -128,6 +130,8 @@ const Postsearch = ({ postClosed }: Postprops) => {
   const [titleUser, setTitleUser] = useState<User[]>([]);
   const navigate = useNavigate();
 
+  const { darkMode } = useTheme();
+
   //토큰값 POST /login 한곳에서 받아와야함
   const token =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY2ZmE0ZWQ0ZDQ3NWE4N2RlMGFlMWE1NSIsImVtYWlsIjoidGVzdDA0QGFhYS5jb20ifSwiaWF0IjoxNzI3NjgwMzEzfQ.7rI5mmvcEa1wvVG2Qb2xhIz2ohiaC2XYwtakrMPHgLQ";
@@ -170,7 +174,7 @@ const Postsearch = ({ postClosed }: Postprops) => {
   };
 
   return (
-    <PostsearchPanel postClosed={postClosed}>
+    <PostsearchPanel darkMode={darkMode} postClosed={postClosed}>
       <span className="postsearch">포스트 검색</span>
       <input type="text" onChange={onChange} value={text} maxLength={18} />
       <button onClick={Reset}></button>

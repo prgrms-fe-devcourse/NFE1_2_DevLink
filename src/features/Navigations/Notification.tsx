@@ -3,8 +3,9 @@ import styled from "styled-components";
 import Notification_Time from "./Notification_Time";
 import user_icon from "../../assets/images/user_icon.png";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../../theme/ThemeContext";
 
-const NotifiationPanel = styled.div<{ isClosed: boolean }>`
+const NotifiationPanel = styled.div<{ isClosed: boolean; darkMode: boolean }>`
   position: absolute;
   background-color: white;
   width: 400px;
@@ -18,6 +19,7 @@ const NotifiationPanel = styled.div<{ isClosed: boolean }>`
   transition: ${(props) => (props.isClosed ? "0.5s" : "0.1s")};
   border-radius: 15px;
   box-shadow: 0px 0px 10px black;
+  background-color: ${({ darkMode }) => (darkMode ? "#6c707a" : "#F9F9F9")};
 
   .notifications {
     position: absolute;
@@ -212,8 +214,10 @@ const Notification = ({ isClosed }: Notiprops) => {
 
   // 해당 좋아요나 댓글 라벨을 클릭할시 해당 페이지로 이동한다.
 
+  const { darkMode } = useTheme();
+
   return (
-    <NotifiationPanel isClosed={isClosed}>
+    <NotifiationPanel isClosed={isClosed} darkMode={darkMode}>
       <span className="notifications">Notifications</span>
       <div className="todaycontainer">
         <div className="today">오늘</div>
