@@ -21,8 +21,10 @@ const Notification_Time: React.FC<TateProps> = ({ createdAt }) => {
     }
   } else if (diffHours >= 1 && diffHours < 24) {
     return `${diffHours}시간 전`;
-  } else if (diffHours >= 24 && diffHours < 168) {
+  } else if (diffHours >= 24 && diffHours < 48) {
     return "1일 전";
+  } else if (diffHours >= 48 && diffHours < 168) {
+    return "몇일 전";
   } else if (diffHours >= 168 && diffHours < 336) {
     return "일주일 전";
   } else if (diffHours >= 336 && diffHours < 504) {
