@@ -16,7 +16,7 @@ const MainPage = () => {
       <SearchUser></SearchUser>
       <OnlineUser></OnlineUser>
       <NavigationBar></NavigationBar>
-      <PostList channelId={channelId} />
+
     </main>
   );
 };
