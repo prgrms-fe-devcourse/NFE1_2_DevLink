@@ -84,7 +84,7 @@ const CommentContent = styled.div<{ darkMode: boolean }>`
   }
 `;
 
-const CommentUserIcon = styled.div<{ darkMode: boolean }>`
+const CommentUserIcon = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -94,7 +94,7 @@ const CommentUserIcon = styled.div<{ darkMode: boolean }>`
 
   span {
     font-size: 18px;
-    color: ${({ darkMode }) => (darkMode ? "white" : "black")};
+    color: "black";
   }
 `;
 
@@ -316,12 +316,12 @@ const CommentComponent: React.FC<CommentComponentProps> = ({ postId, post }) => 
         {comments.map((comment) => (
           <CommentItem key={comment._id}>
             <CommentUserIcon onClick={() => handleAuthorClick(comment.author._id)}>
-              <UserOutlined style={{ fontSize: "50px" }} />
-              <span>{comment.author.fullName}</span>
+              <UserOutlined style={{ fontSize: "50px", color: "black" }} />
+              <span style={{ color: "black" }}>{comment.author.fullName}</span>
             </CommentUserIcon>
-            <CommentContent>
+            <CommentContent darkMode={darkMode}>
               <div className="comment-top">
-                <p>{comment.comment}</p>
+                <p style={{ color: "black" }}>{comment.comment}</p>
               </div>
               <p className="createdAt">{new Date(comment.createdAt).toLocaleDateString("ko-KR")}</p>
             </CommentContent>
