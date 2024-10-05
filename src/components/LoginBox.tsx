@@ -213,7 +213,7 @@ const LoginBox = ({ userData }: PropsData) => {
         <KakaoButton type="button">카카오로 로그인</KakaoButton>
       </form>
       <div>
-        계정이 없으신가요?
+        <span style={{ color: "black" }}>계정이 없으신가요?</span>
         <SignUpButton type="link" onClick={() => navigate("/signup")}>
           회원 가입
         </SignUpButton>

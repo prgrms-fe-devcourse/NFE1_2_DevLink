@@ -4,23 +4,25 @@ import styled from "styled-components";
 
 import { config } from "../../features/post-management/config";
 import NavigationBar from "../Navigation/NavigationBar";
+import { useTheme } from "../../theme/ThemeContext";
 
 const { Sider, Content } = Layout;
 
 const PostLayout: React.FC<PropsWithChildren> = ({ children }) => {
+  const { darkMode } = useTheme();
   return (
     <Layout>
       <Sider collapsed>
         <NavigationBar />
       </Sider>
       <Layout>
-        <Container>{children}</Container>
+        <Container darkMode={darkMode}>{children}</Container>
       </Layout>
     </Layout>
   );
 };
 
-const Container = styled(Content)`
+const Container = styled(Content)<{ darkMode: boolean }>`
   display: flex;
   flex-direction: column;
   height: 100vh;

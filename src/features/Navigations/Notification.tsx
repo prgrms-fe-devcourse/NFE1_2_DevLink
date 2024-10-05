@@ -4,18 +4,22 @@ import Notification_Time from "./Notification_Time";
 import user_icon from "../../assets/images/user_icon.png";
 import { useNavigate } from "react-router-dom";
 
-const NotifiationPanel = styled.div<{ isClosed: boolean }>`
+interface NotificationPanelProps {
+  $isClosed: boolean;
+}
+
+const NotificationPanel = styled.div<NotificationPanelProps>`
   position: absolute;
   background-color: white;
   width: 400px;
   height: 706px;
   // 네비게이션바 펼쳐지고 닫힐때 패널 위치조절
   top: 32px;
-  left: ${(props) => (props.isClosed ? "107.5px" : "202.5px")};
+  left: ${(props) => (props.$isClosed ? "107.5px" : "202.5px")};
   z-index: 1000;
   color: black;
   // 트랜지션 값 펼쳐지고 닫힐때 조절
-  transition: ${(props) => (props.isClosed ? "0.5s" : "0.1s")};
+  transition: ${(props) => (props.$isClosed ? "0.5s" : "0.1s")};
   border-radius: 15px;
   box-shadow: 0px 0px 10px black;
 
@@ -27,9 +31,8 @@ const NotifiationPanel = styled.div<{ isClosed: boolean }>`
     font-size: 24px;
     font-weight: bold;
   }
+
   .todaycontainer {
-    /* background-color: black;
-    color: white; */
     width: 400px;
     height: 200px;
     margin-top: 55px;
@@ -48,51 +51,55 @@ const NotifiationPanel = styled.div<{ isClosed: boolean }>`
   }
 
   .yesterdaycontainer {
-    /* background-color: #f90000;
-    color: white; */
     width: 400px;
     height: 205px;
     margin-top: 20px;
+
     .yesterday {
       font-size: 20px;
       margin-left: 24px;
       font-weight: bold;
     }
   }
+
   .pastcontainer {
-    /* background-color: #22ff00;
-    color: white; */
     width: 400px;
     height: 205px;
     margin-top: 20px;
+
     .past {
       font-size: 20px;
       margin-left: 24px;
       font-weight: bold;
     }
   }
+
   p {
     margin-left: 24px;
     font-size: 12px;
     font-weight: bold;
   }
+
   hr {
     width: 379px;
     margin: 0;
     margin-left: 10px;
-    height: 0.5;
+    height: 0.5px;
     background-color: #dbdbdb;
   }
+
   .likespan {
     color: #8e8e8e;
     margin-left: 27px;
     vertical-align: middle;
   }
+
   .commentspan {
     color: #8e8e8e;
     margin-left: 26px;
     vertical-align: middle;
   }
+
   .label {
     margin-left: 10px;
     white-space: nowrap;
@@ -102,57 +109,68 @@ const NotifiationPanel = styled.div<{ isClosed: boolean }>`
     width: 236.73px;
     vertical-align: middle;
   }
+
   img {
     vertical-align: middle;
   }
+
   .todaylabel {
     vertical-align: middle;
     cursor: pointer;
   }
 `;
 
-//타입지정 다시해야함
-type Notiprops = {
-  isClosed: boolean;
-};
+interface User {
+  _id: string;
+  fullName: string;
+}
+
+interface Post {
+  _id: string;
+  createdAt: string;
+  title: string;
+}
+
+interface Comment {
+  author: string;
+  post: Post;
+}
+
+interface Like {
+  user: string;
+  post: Post;
+}
 
 interface Notification {
-  type: "like" | "comment";
+  _id: string;
+  post: Post;
+  comment?: Comment;
+  like?: Like;
   createdAt: string;
-  authorFullName: string;
-  title: string;
-  likes?: { post: string }[];
-  comments?: { createdAt: string }[];
-  post: string;
 }
 
-interface NotifiCations {
-  likes: { createdAt: string; post: string }[];
-  comments: { createdAt: string; post: string }[];
-  author: { fullName: string };
-  title: string;
+interface Notiprops {
+  isClosed: boolean;
+  postId?: string;
 }
 
-const Notification = ({ isClosed }: Notiprops) => {
-  const [notifiCations, setNotifiCations] = useState<NotifiCations>({
-    likes: [],
-    comments: [],
-    author: { fullName: "" },
-    title: "",
-  });
+const Notification: React.FC<Notiprops> = ({ isClosed }) => {
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   const navigate = useNavigate();
-  //토큰값 POST /login 한곳에서 받아와야함
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY2ZmE0ZWQ0ZDQ3NWE4N2RlMGFlMWE1NSIsImVtYWlsIjoidGVzdDA0QGFhYS5jb20ifSwiaWF0IjoxNzI3NjgwMzEzfQ.7rI5mmvcEa1wvVG2Qb2xhIz2ohiaC2XYwtakrMPHgLQ";
+  const token = localStorage.getItem("userToken");
 
-  //특정 포스트에있는 좋아요, 댓글, 포스트제목, 사용자이름을 불러와야함
-  //User에서 포스트 아이디값 불러와야함
   useEffect(() => {
     const fetchData = async () => {
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+
       try {
         const response = await fetch(
-          "https://kdt.frontend.5th.programmers.co.kr:5004/posts/66fa51ca99151c7e47a33535",
+          "https://kdt.frontend.5th.programmers.co.kr:5004/notifications",
           {
             method: "GET",
             headers: {
@@ -161,17 +179,65 @@ const Notification = ({ isClosed }: Notiprops) => {
             },
           }
         );
-        const data = await response.json();
-        setNotifiCations(data);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch notifications");
+        }
+
+        const data: Notification[] = await response.json();
+        setNotifications(data);
       } catch (error) {
         console.error("Error:", error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [token]);
 
-  //좋아요,댓글 오늘,어제,과거 구분함수
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (notifications.length === 0) return;
+
+      const userFetchPromises = notifications.map(async (notification) => {
+        const authorId = notification.comment
+          ? notification.comment.author
+          : notification.like?.user;
+
+        if (!authorId) return null;
+
+        try {
+          const response = await fetch(
+            `https://kdt.frontend.5th.programmers.co.kr:5004/users/${authorId}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error(`Failed to fetch user with ID: ${authorId}`);
+          }
+
+          const userData: User = await response.json();
+          return userData;
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          return null;
+        }
+      });
+
+      Promise.all(userFetchPromises).then((usersData) => {
+        const validUsersData = usersData.filter((user): user is User => user !== null);
+        setUsers(validUsersData);
+      });
+    };
+
+    fetchUserData();
+  }, [notifications, token]);
+
   const getDateLabel = (createdAt: string): string => {
     const createdDate = new Date(createdAt);
     const today = new Date();
@@ -183,114 +249,172 @@ const Notification = ({ isClosed }: Notiprops) => {
 
     if (diffDays === 0) {
       return "오늘";
-    } else if (diffDays === 1) {
+    } else if (diffDays > 1 && diffDays < 7) {
       return "어제";
-    } else if (diffDays > 1) {
+    } else if (diffDays >= 7) {
       return "과거";
     }
 
     return "";
   };
 
-  // 시간에 따라 좋아요와 댓글 알림 유동적으로 나타나게 하기
-  const divisionNotifications: Notification[] = [
-    ...notifiCations.likes.map((like) => ({
-      type: "like" as const,
-      createdAt: like.createdAt,
-      authorFullName: notifiCations.author.fullName,
-      title: notifiCations.title,
-      post: like.post,
-    })),
-    ...notifiCations.comments.map((comment) => ({
-      type: "comment" as const,
-      createdAt: comment.createdAt,
-      authorFullName: notifiCations.author.fullName,
-      title: notifiCations.title,
-      post: comment.post,
-    })),
-  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const handleNavigate = (postId: string) => {
+    navigate(`/post/${postId}`);
+  };
 
-  // 해당 좋아요나 댓글 라벨을 클릭할시 해당 페이지로 이동한다.
+  const groupedNotifications = notifications.reduce<{
+    today: Notification[];
+    yesterday: Notification[];
+    past: Notification[];
+  }>(
+    (acc, notification) => {
+      const label = getDateLabel(notification.createdAt);
+      if (label === "오늘") {
+        acc.today.push(notification);
+      } else if (label === "어제") {
+        acc.yesterday.push(notification);
+      } else if (label === "과거") {
+        acc.past.push(notification);
+      }
+      return acc;
+    },
+    { today: [], yesterday: [], past: [] }
+  );
+
+  const userMap: Record<string, User> = {};
+  users.forEach(function (user) {
+    userMap[user._id] = user;
+  });
 
   return (
-    <NotifiationPanel isClosed={isClosed}>
+    <NotificationPanel $isClosed={isClosed}>
       <span className="notifications">Notifications</span>
+
       <div className="todaycontainer">
         <div className="today">오늘</div>
-        {divisionNotifications.map((notification, index) =>
-          getDateLabel(notification.createdAt) === "오늘" ? (
-            <div key={index}>
-              <p
-                className="todaylabel"
-                onClick={() => {
-                  navigate(`/post/${notification.post}`);
-                }}>
-                <img src={user_icon} alt="" />
-                <span className="label">
-                  {notification.type === "like"
-                    ? `${notification.authorFullName}님이 "${notification.title}"에 좋아요를 표시했습니다.`
-                    : `${notification.authorFullName}님이 "${notification.title}"에 댓글을 작성했습니다.`}
-                </span>
-                <span className={notification.type === "like" ? "likespan" : "commentspan"}>
-                  <Notification_Time createdAt={notification.createdAt} />
-                </span>
-              </p>
-            </div>
-          ) : null
-        )}
+        {groupedNotifications.today
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .map((notification) => {
+            const postId = notification.post._id;
+            const userName = notification.comment
+              ? userMap[notification.comment.author]?.fullName
+              : notification.like
+                ? userMap[notification.like.user]?.fullName
+                : "Unknown User";
+
+            const postTitle = notification.comment
+              ? notification.comment.post.title
+              : notification.like?.post.title;
+
+            return (
+              <div key={notification._id}>
+                <p className="todaylabel" onClick={() => handleNavigate(postId)}>
+                  <img src={user_icon} alt="User Icon" />
+                  <span className="label">
+                    {notification.comment
+                      ? `${userName}님이 "${postTitle}"에 댓글을 작성했습니다.`
+                      : `${userName}님이 "${postTitle}"에 좋아요를 표시했습니다.`}
+                  </span>
+                  <span className={notification.comment ? "commentspan" : "likespan"}>
+                    <Notification_Time
+                      createdAt={
+                        notification.comment
+                          ? notification.comment.post.createdAt
+                          : notification.like?.post.createdAt || ""
+                      }
+                    />
+                  </span>
+                </p>
+              </div>
+            );
+          })}
       </div>
 
       <hr />
+
       <div className="yesterdaycontainer">
         <div className="yesterday">어제</div>
-        {divisionNotifications.map((notification, index) =>
-          getDateLabel(notification.createdAt) === "어제" ? (
-            <div key={index}>
-              <p
-                className="todaylabel"
-                onClick={() => {
-                  navigate(`/post/${notification.post}`);
-                }}>
-                <img src={user_icon} alt="" />
-                <span className="label">
-                  {notification.type === "like"
-                    ? `${notification.authorFullName}님이 "${notification.title}"에 좋아요를 표시했습니다.`
-                    : `${notification.authorFullName}님이 "${notification.title}"에 댓글을 작성했습니다.`}
-                </span>
-                <span className={notification.type === "like" ? "likespan" : "commentspan"}>
-                  <Notification_Time createdAt={notification.createdAt} />
-                </span>
-              </p>
-            </div>
-          ) : null
-        )}
+        {groupedNotifications.yesterday
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .map((notification) => {
+            const postId = notification.post._id;
+            const userName = notification.comment
+              ? userMap[notification.comment.author]?.fullName
+              : notification.like
+                ? userMap[notification.like.user]?.fullName
+                : "Unknown User";
+
+            const postTitle = notification.comment
+              ? notification.comment.post.title
+              : notification.like?.post.title;
+
+            return (
+              <div key={notification._id}>
+                <p className="todaylabel" onClick={() => handleNavigate(postId)}>
+                  <img src={user_icon} alt="User Icon" />
+                  <span className="label">
+                    {notification.comment
+                      ? `${userName}님이 "${postTitle}"에 댓글을 작성했습니다.`
+                      : `${userName}님이 "${postTitle}"에 좋아요를 표시했습니다.`}
+                  </span>
+                  <span className={notification.comment ? "commentspan" : "likespan"}>
+                    <Notification_Time
+                      createdAt={
+                        notification.comment
+                          ? notification.comment.post.createdAt
+                          : notification.like?.post.createdAt || ""
+                      }
+                    />
+                  </span>
+                </p>
+              </div>
+            );
+          })}
       </div>
+
       <hr />
+
       <div className="pastcontainer">
         <div className="past">과거</div>
+        {groupedNotifications.past
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .map((notification) => {
+            const postId = notification.post._id;
+            const userName = notification.comment
+              ? userMap[notification.comment.author]?.fullName
+              : notification.like
+                ? userMap[notification.like.user]?.fullName
+                : "Unknown User";
+
+            const postTitle = notification.comment
+              ? notification.comment.post.title
+              : notification.like?.post.title;
+
+            return (
+              <div key={notification._id}>
+                <p className="todaylabel" onClick={() => handleNavigate(postId)}>
+                  <img src={user_icon} alt="User Icon" />
+                  <span className="label">
+                    {notification.comment
+                      ? `${userName}님이 "${postTitle}"에 댓글을 작성했습니다.`
+                      : `${userName}님이 "${postTitle}"에 좋아요를 표시했습니다.`}
+                  </span>
+                  <span className={notification.comment ? "commentspan" : "likespan"}>
+                    <Notification_Time
+                      createdAt={
+                        notification.comment
+                          ? notification.comment.post.createdAt
+                          : notification.like?.post.createdAt || ""
+                      }
+                    />
+                  </span>
+                </p>
+              </div>
+            );
+          })}
       </div>
-    </NotifiationPanel>
+    </NotificationPanel>
   );
 };
 
 export default Notification;
-
-{
-  /* {notifiCations.likes && getDateLabel(notifiCations.likes[0].createdAt) === "오늘" ? (
-          <p className="todaylabel">
-            {`${notifiCations.author.fullName}님이 "${notifiCations.title}"에 좋아요를 표시했습니다.`}
-            <span className="likespan">
-              <Notification_Time createdAt={notifiCations.likes[0].createdAt} />
-            </span>
-          </p>
-        ) : null}
-        {notifiCations.comments && getDateLabel(notifiCations.comments[0].createdAt) === "오늘" ? (
-          <p className="todaylabel">
-            {`${notifiCations.author.fullName}님이 "${notifiCations.title}"에 댓글을 작성했습니다.`}
-            <span className="commentspan">
-              <Notification_Time createdAt={notifiCations.comments[0].createdAt} />
-            </span>
-          </p>
-        ) : null}
-      </div> */
-}

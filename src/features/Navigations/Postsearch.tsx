@@ -4,18 +4,22 @@ import { useEffect, useState } from "react";
 import user_icon from "../../assets/images/user_icon.png";
 import { useNavigate } from "react-router-dom";
 
-const PostsearchPanel = styled.div<{ postClosed: boolean }>`
+interface postCard {
+  $postClosed: boolean;
+}
+
+const PostsearchPanel = styled.div<postCard>`
   position: absolute;
   background-color: white;
   width: 397px;
   height: 706px;
   // 네비게이션바 펼쳐지고 닫힐때 패널 위치조절
   top: 32px;
-  left: ${(props) => (props.postClosed ? "107.5px" : "202.5px")};
+  left: ${(props) => (props.$postClosed ? "107.5px" : "202.5px")};
   z-index: 1000;
   color: black;
   // 트랜지션 값 펼쳐지고 닫힐때 조절
-  transition: ${(props) => (props.postClosed ? "0.5s" : "0.1s")};
+  transition: ${(props) => (props.$postClosed ? "0.5s" : "0.1s")};
   border-radius: 15px;
   box-shadow: 0px 0px 10px black;
 
@@ -100,13 +104,19 @@ const PostsearchPanel = styled.div<{ postClosed: boolean }>`
   }
   .username {
     padding-left: 12px;
+    width: 60px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
     font-weight: lighter;
     font-size: 14px;
     vertical-align: middle;
   }
   img {
     vertical-align: middle;
-    padding-left: 60px;
+    display: inline-block;
+    padding-left: 46px;
     padding-top: 5px;
   }
 `;
@@ -129,8 +139,7 @@ const Postsearch = ({ postClosed }: Postprops) => {
   const navigate = useNavigate();
 
   //토큰값 POST /login 한곳에서 받아와야함
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY2ZmE0ZWQ0ZDQ3NWE4N2RlMGFlMWE1NSIsImVtYWlsIjoidGVzdDA0QGFhYS5jb20ifSwiaWF0IjoxNzI3NjgwMzEzfQ.7rI5mmvcEa1wvVG2Qb2xhIz2ohiaC2XYwtakrMPHgLQ";
+  const token = localStorage.getItem("userToken");
 
   //특정 포스트에있는 좋아요, 댓글, 포스트제목, 사용자이름을 불러와야함
   //User에서 포스트 아이디값 불러와야함
@@ -170,7 +179,7 @@ const Postsearch = ({ postClosed }: Postprops) => {
   };
 
   return (
-    <PostsearchPanel postClosed={postClosed}>
+    <PostsearchPanel $postClosed={postClosed}>
       <span className="postsearch">포스트 검색</span>
       <input type="text" onChange={onChange} value={text} maxLength={18} />
       <button onClick={Reset}></button>

@@ -176,12 +176,12 @@ const SignupBox = ({ userData }: PropsData) => {
           회원 가입
         </SubmitButton>
       </form>
-      <span>
-        계정이 있으신가요?
+      <div>
+        <span style={{ color: "black" }}>계정이 있으신가요?</span>
         <LoginButton type="link" onClick={() => navigate("/signin")}>
           로그인
         </LoginButton>
-      </span>
+      </div>
     </BoxStyle>
   );
 };
