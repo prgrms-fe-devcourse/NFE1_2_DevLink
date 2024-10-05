@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button, message } from "antd";
-import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import styled from "styled-components";
 
 interface LikeButtonPostDetailPageProps {
@@ -43,7 +42,7 @@ const LikeButtonPostDetailPage: React.FC<LikeButtonPostDetailPageProps> = ({
 
   // 좋아요 처리 함수
   const handleLike = async () => {
-    const jwtToken = localStorage.getItem("jwtToken");
+    const jwtToken = localStorage.getItem("userToken");
 
     if (!jwtToken) {
       message.error("로그인이 필요합니다.");
@@ -115,8 +114,7 @@ const LikeButtonPostDetailPage: React.FC<LikeButtonPostDetailPageProps> = ({
   return (
     <LikeContainer style={style}>
       <button
-        onClick={handleLike}
-        disabled={isLiked}
+        onClick={handleLike} // 버튼을 비활성화하지 않고 상태에 따라 클릭 가능
         style={{ border: "none", background: "transparent", cursor: "pointer" }}>
         {isLiked ? (
           <img src="/heart_icon_fill_40px.png" alt="검정하트 40px" />

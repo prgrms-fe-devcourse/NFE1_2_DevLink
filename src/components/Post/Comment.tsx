@@ -96,7 +96,6 @@ const CommentButtons = styled.div`
   display: flex;
   gap: 5px;
 `;
-///////////////////////////////////////////////////////
 
 // Comment 타입 정의 추가
 interface Comment {
@@ -110,11 +109,20 @@ interface Comment {
   createdAt: string; // 댓글 작성일
 }
 
-interface CommentComponentPorps {
-  postId: string;
+interface Post {
+  _id: string;
+  author: {
+    _id: string;
+    fullName: string;
+  };
 }
 
-const CommentComponent: React.FC<CommentComponentPorps> = ({ postId }) => {
+interface CommentComponentProps {
+  postId: string;
+  post: Post; // post 객체를 props로 추가
+}
+
+const CommentComponent: React.FC<CommentComponentProps> = ({ postId, post }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState<string>("");
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -143,7 +151,7 @@ const CommentComponent: React.FC<CommentComponentPorps> = ({ postId }) => {
 
   // 댓글 작성 함수
   const handleAddComment = async () => {
-    const jwtToken = localStorage.getItem("jwtToken");
+    const jwtToken = localStorage.getItem("userToken");
     if (!jwtToken) {
       message.error("로그인이 필요합니다.");
       return;
@@ -172,13 +180,48 @@ const CommentComponent: React.FC<CommentComponentPorps> = ({ postId }) => {
       const newCommentData = await response.json();
       setComments((prevComments) => [...prevComments, newCommentData]); // 작성된 댓글 추가
       setNewComment(""); // 입력창 비우기
+
+      // 댓글 작성 후 알림 생성
+      await createNotification(newCommentData._id, post, jwtToken);
+
       console.log("댓글 작성 성공:", newCommentData);
     } catch (error) {
       message.error("댓글 작성 중 오류 발생");
     }
   };
-  //로그인한 사용자 ID 호출 (본일일때 삭제 버튼 활성화)
-  const fectchUserData = async () => {
+
+  // 알림 생성 함수
+  const createNotification = async (commentId: string, post: Post, jwtToken: string) => {
+    try {
+      const response = await fetch(
+        "https://kdt.frontend.5th.programmers.co.kr:5004/notifications/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify({
+            notificationType: "COMMENT", // 댓글이므로 COMMENT로 설정
+            notificationTypeId: commentId, // 작성된 댓글의 ID
+            userId: post.author._id, // 알림을 받을 포스트 작성자
+            postId: post._id, // 포스트 ID
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("알림 생성 실패");
+      }
+
+      console.log("알림 생성 완료");
+    } catch (error) {
+      console.error("알림 생성 중 오류 발생:", error);
+    }
+  };
+
+  //로그인한 사용자 ID 호출 (본인일 때 삭제 버튼 활성화)
+  const fetchUserData = async () => {
     const jwtToken = localStorage.getItem("jwtToken");
     if (!jwtToken) return;
 
@@ -191,7 +234,7 @@ const CommentComponent: React.FC<CommentComponentPorps> = ({ postId }) => {
 
       if (response.ok) {
         const userData = await response.json();
-        setCurrentUserId(userData._id); //로그인한 사용자의 Id로 설정
+        setCurrentUserId(userData._id); // 로그인한 사용자의 Id로 설정
       }
     } catch (error) {
       console.error("사용자 정보를 가져오는데 실패했습니다", error);
@@ -200,7 +243,7 @@ const CommentComponent: React.FC<CommentComponentPorps> = ({ postId }) => {
 
   useEffect(() => {
     fetchComments();
-    fectchUserData(); // 사용자 정보를 가져오기 위한 useEffect 호출 추가
+    fetchUserData(); // 사용자 정보를 가져오기 위한 useEffect 호출 추가
   }, [postId]);
 
   // 댓글 삭제 함수
