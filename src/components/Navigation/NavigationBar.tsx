@@ -9,7 +9,6 @@ import expantion from "../../assets/images/expansion.png";
 import reduction from "../../assets/images/reduction.png";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import Alarm from "../../features/Navigations/Alarm";
 import Notification from "../../features/Navigations/Notification";
 import Postsearch from "../../features/Navigations/Postsearch";
 import { useTheme } from "../../theme/ThemeContext";
@@ -176,9 +175,7 @@ const NavigationBar = () => {
         </Button>
 
         <Button onClick={notiHandler} className={showNav ? "" : "btncloseNav"} $darkMode={darkMode}>
-          <Alarm isClosed={!showNav}>
-            <img src={alarm} alt="alarm" />
-          </Alarm>
+          <img src={alarm} alt="alarm" />
           <span>알림</span>
         </Button>
 

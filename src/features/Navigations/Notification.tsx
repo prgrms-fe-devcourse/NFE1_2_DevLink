@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Notification_Time from "./Notification_Time";
 import user_icon from "../../assets/images/user_icon.png";
@@ -11,7 +11,7 @@ interface NotificationPanelProps {
 }
 
 const NotificationPanel = styled.div<NotificationPanelProps>`
-  position: absolute;
+  position: fixed;
   background-color: white;
   width: 400px;
   height: 706px;
@@ -44,6 +44,7 @@ const NotificationPanel = styled.div<NotificationPanelProps>`
 
     .today {
       font-size: 20px;
+
       margin-left: 24px;
       font-weight: bold;
     }
@@ -120,6 +121,17 @@ const NotificationPanel = styled.div<NotificationPanelProps>`
   .todaylabel {
     vertical-align: middle;
     cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    .title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+      width: 60px;
+      vertical-align: middle;
+    }
   }
 `;
 
@@ -131,25 +143,29 @@ interface User {
 interface Post {
   _id: string;
   createdAt: string;
+  updatedAt: string;
   title: string;
 }
 
 interface Comment {
   author: string;
   post: Post;
+  updatedAt: string;
 }
 
 interface Like {
   user: string;
   post: Post;
+  updatedAt: string;
 }
 
 interface Notification {
   _id: string;
-  post: Post;
+  post: string;
   comment?: Comment;
   like?: Like;
   createdAt: string;
+  updatedAt: string;
 }
 
 interface Notiprops {
@@ -291,6 +307,16 @@ const Notification: React.FC<Notiprops> = ({ isClosed }) => {
 
   const { darkMode } = useTheme();
 
+  function getPostTitle(postTitle: string | undefined) {
+    try {
+      // postTitle이 없을 경우 기본값으로 빈 문자열을 사용
+      const parsedTitle = postTitle ? JSON.parse(postTitle) : { title: "" };
+      return parsedTitle.title || postTitle;
+    } catch {
+      return postTitle || ""; // postTitle이 undefined일 경우 빈 문자열을 반환
+    }
+  }
+
   return (
     <NotificationPanel $isClosed={isClosed} $darkMode={darkMode}>
       <span className="notifications">Notifications</span>
@@ -300,38 +326,45 @@ const Notification: React.FC<Notiprops> = ({ isClosed }) => {
         {groupedNotifications.today
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
           .map((notification) => {
-            const postId = notification.post._id;
+            const postId = notification.post;
             const userName = notification.comment
               ? userMap[notification.comment.author]?.fullName
               : notification.like
                 ? userMap[notification.like.user]?.fullName
-                : "Unknown User";
+                : null;
 
             const postTitle = notification.comment
               ? notification.comment.post.title
               : notification.like?.post.title;
 
-            return (
-              <div key={notification._id}>
-                <p className="todaylabel" onClick={() => handleNavigate(postId)}>
-                  <img src={user_icon} alt="User Icon" />
-                  <span className="label">
-                    {notification.comment
-                      ? `${userName}님이 "${postTitle}"에 댓글을 작성했습니다.`
-                      : `${userName}님이 "${postTitle}"에 좋아요를 표시했습니다.`}
-                  </span>
-                  <span className={notification.comment ? "commentspan" : "likespan"}>
-                    <Notification_Time
-                      createdAt={
-                        notification.comment
-                          ? notification.comment.post.createdAt
-                          : notification.like?.post.createdAt || ""
-                      }
-                    />
-                  </span>
-                </p>
-              </div>
-            );
+            const createdAt = notification.comment
+              ? notification.comment.updatedAt
+              : notification.like?.updatedAt;
+            if (userName) {
+              return (
+                <div key={notification._id}>
+                  <p className="todaylabel" onClick={() => handleNavigate(postId)}>
+                    <img src={user_icon} alt="User Icon" />
+                    <span className="label">
+                      {notification.comment ? (
+                        <>
+                          {userName}님이 <span className="title">"{getPostTitle(postTitle)}"</span>
+                          에 댓글을 작성했습니다.
+                        </>
+                      ) : (
+                        <>
+                          {userName}님이 <span className="title">"{getPostTitle(postTitle)}"</span>
+                          에 좋아요를 표시했습니다.
+                        </>
+                      )}
+                    </span>
+                    <span className={notification.comment ? "commentspan" : "likespan"}>
+                      <Notification_Time createdAt={createdAt || ""} />
+                    </span>
+                  </p>
+                </div>
+              );
+            }
           })}
       </div>
 
@@ -342,38 +375,45 @@ const Notification: React.FC<Notiprops> = ({ isClosed }) => {
         {groupedNotifications.yesterday
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
           .map((notification) => {
-            const postId = notification.post._id;
+            const postId = notification.post;
             const userName = notification.comment
               ? userMap[notification.comment.author]?.fullName
               : notification.like
                 ? userMap[notification.like.user]?.fullName
-                : "Unknown User";
+                : null;
 
             const postTitle = notification.comment
               ? notification.comment.post.title
               : notification.like?.post.title;
 
-            return (
-              <div key={notification._id}>
-                <p className="todaylabel" onClick={() => handleNavigate(postId)}>
-                  <img src={user_icon} alt="User Icon" />
-                  <span className="label">
-                    {notification.comment
-                      ? `${userName}님이 "${postTitle}"에 댓글을 작성했습니다.`
-                      : `${userName}님이 "${postTitle}"에 좋아요를 표시했습니다.`}
-                  </span>
-                  <span className={notification.comment ? "commentspan" : "likespan"}>
-                    <Notification_Time
-                      createdAt={
-                        notification.comment
-                          ? notification.comment.post.createdAt
-                          : notification.like?.post.createdAt || ""
-                      }
-                    />
-                  </span>
-                </p>
-              </div>
-            );
+            const createdAt = notification.comment
+              ? notification.comment.updatedAt
+              : notification.like?.updatedAt;
+            if (userName) {
+              return (
+                <div key={notification._id}>
+                  <p className="todaylabel" onClick={() => handleNavigate(postId)}>
+                    <img src={user_icon} alt="User Icon" />
+                    <span className="label">
+                      {notification.comment ? (
+                        <>
+                          {userName}님이 <span className="title">"{getPostTitle(postTitle)}"</span>
+                          에 댓글을 작성했습니다.
+                        </>
+                      ) : (
+                        <>
+                          {userName}님이 <span className="title">"{getPostTitle(postTitle)}"</span>
+                          에 좋아요를 표시했습니다.
+                        </>
+                      )}
+                    </span>
+                    <span className={notification.comment ? "commentspan" : "likespan"}>
+                      <Notification_Time createdAt={createdAt || ""} />
+                    </span>
+                  </p>
+                </div>
+              );
+            }
           })}
       </div>
 
@@ -384,38 +424,45 @@ const Notification: React.FC<Notiprops> = ({ isClosed }) => {
         {groupedNotifications.past
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
           .map((notification) => {
-            const postId = notification.post._id;
+            const postId = notification.post;
             const userName = notification.comment
               ? userMap[notification.comment.author]?.fullName
               : notification.like
                 ? userMap[notification.like.user]?.fullName
-                : "Unknown User";
+                : null;
 
             const postTitle = notification.comment
               ? notification.comment.post.title
               : notification.like?.post.title;
 
-            return (
-              <div key={notification._id}>
-                <p className="todaylabel" onClick={() => handleNavigate(postId)}>
-                  <img src={user_icon} alt="User Icon" />
-                  <span className="label">
-                    {notification.comment
-                      ? `${userName}님이 "${postTitle}"에 댓글을 작성했습니다.`
-                      : `${userName}님이 "${postTitle}"에 좋아요를 표시했습니다.`}
-                  </span>
-                  <span className={notification.comment ? "commentspan" : "likespan"}>
-                    <Notification_Time
-                      createdAt={
-                        notification.comment
-                          ? notification.comment.post.createdAt
-                          : notification.like?.post.createdAt || ""
-                      }
-                    />
-                  </span>
-                </p>
-              </div>
-            );
+            const createdAt = notification.comment
+              ? notification.comment.updatedAt
+              : notification.like?.updatedAt;
+            if (userName) {
+              return (
+                <div key={notification._id}>
+                  <p className="todaylabel" onClick={() => handleNavigate(postId)}>
+                    <img src={user_icon} alt="User Icon" />
+                    <span className="label">
+                      {notification.comment ? (
+                        <>
+                          {userName}님이 <span className="title">"{getPostTitle(postTitle)}"</span>
+                          에 댓글을 작성했습니다.
+                        </>
+                      ) : (
+                        <>
+                          {userName}님이 <span className="title">"{getPostTitle(postTitle)}"</span>
+                          에 좋아요를 표시했습니다.
+                        </>
+                      )}
+                    </span>
+                    <span className={notification.comment ? "commentspan" : "likespan"}>
+                      <Notification_Time createdAt={createdAt || ""} />
+                    </span>
+                  </p>
+                </div>
+              );
+            }
           })}
       </div>
     </NotificationPanel>

@@ -12,7 +12,6 @@ const BadgeContainer = styled.div`
 `;
 
 const Super = styled.sup<AlarmClosed>`
-  // isSeen 추가
   position: absolute;
   top: 0;
   right: 0;
@@ -32,6 +31,7 @@ const Super = styled.sup<AlarmClosed>`
 interface AlarmProps {
   children: React.ReactNode;
   isClosed: boolean;
+  isSeen: boolean;
 }
 
 interface AlarmData {
@@ -40,7 +40,7 @@ interface AlarmData {
 
 const Alarm: React.FC<AlarmProps> = ({ children, isClosed, ...props }) => {
   const [alarms, setAlarms] = useState<AlarmData[]>([]);
-  const [isSeen, setIsSeen] = useState<boolean>(true);
+  const [isSeen, setIsSeen] = useState<boolean>(false);
 
   const token = localStorage.getItem("userToken");
 
@@ -70,9 +70,8 @@ const Alarm: React.FC<AlarmProps> = ({ children, isClosed, ...props }) => {
         const data: AlarmData[] = await response.json();
         setAlarms(data);
 
-        // isSeen 상태 업데이트: alarms 배열에 seen: false인 항목이 하나라도 있는지 확인
         const anyUnseen = data.some((alarm) => alarm.seen === false);
-        setIsSeen(!anyUnseen); // anyUnseen이 true면 isSeen은 false (visible)
+        setIsSeen(!anyUnseen);
       } catch (error) {
         console.error("Error:", error);
       }
