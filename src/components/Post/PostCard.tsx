@@ -150,15 +150,14 @@ const PostCard: React.FC<PostCardProps> = ({ postId }) => {
     return <div>로딩중임 !!!</div>;
   }
 
-  // post가 비어있지 않은지 확인하기 위한 콘솔 출력
-  console.log("post 정보 : ", post); // 렌더링 전에 post의 상태 확인
+  // console.log("post 정보 : ", post);  // post 정보 확인
 
   if (!post) {
     return <div>포스트 없어요 !!!</div>;
   }
 
   return (
-    <StyledCard bodyStyle={{ padding: "0" }} onClick={() => handlePostClick(post._id)}>
+    <StyledCard styles={{ body: { padding: "0" } }} onClick={() => handlePostClick(post._id)}>
       <PreviewContainer>
         {(() => {
           try {
