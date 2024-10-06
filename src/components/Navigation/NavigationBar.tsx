@@ -27,6 +27,7 @@ const Navcontainer = styled.div<{ $darkMode: boolean }>`
   transition: 0.5s;
   height: 100vh; /* 화면 전체 높이 */
   position: fixed; /* 고정 위치 */
+  white-space: nowrap;
 
   &.closeNav {
     width: 105px;
@@ -187,7 +188,6 @@ const NavigationBar = () => {
           <span>다크 모드</span>
         </Button>
 
-        {/* 유저아이디로 다시 지정해야함 */}
         <Button
           onClick={() => profile && navigate(`/profile/${profile._id}`)}
           className={showNav ? "" : "btncloseNav"}

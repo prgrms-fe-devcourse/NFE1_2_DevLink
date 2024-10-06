@@ -195,10 +195,9 @@ const Postsearch = ({ postClosed }: Postprops) => {
             {titleUser.map((user) =>
               user.channel && user.channel.name === "devlink" ? (
                 <li key={user._id} onClick={() => navigate(`/post/${user._id}`)}>
-                  <p className="title">{user.title}</p>
+                  <p className="title">{JSON.parse(user.title).title}</p>
                   <img src={user_icon} alt="user_icon" />
                   <span className="username">{user.author.fullName}</span>
-                  {/* <hr className="hr2" /> */}
                 </li>
               ) : null
             )}
