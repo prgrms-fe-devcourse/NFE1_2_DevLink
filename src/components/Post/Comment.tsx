@@ -3,19 +3,23 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button, Input, message } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../../theme/ThemeContext";
 
 // Styled Components
 const CommentWrapper = styled.div`
   margin-top: 20px;
 `;
 
-const Title = styled.div`
+const Title = styled.div<{ $darkMode: boolean }>`
   display: flex;
   align-items: center;
   gap: 17px;
   margin-bottom: 20px;
   img {
     margin: 0;
+    /* darkMode 값에 따른 밝기 조절 */
+    filter: ${({ $darkMode }) => ($darkMode ? "brightness(15)" : "brightness(1)")};
+    transition: filter 0.5s;
   }
 
   h2 {
@@ -54,7 +58,7 @@ const CommentItem = styled.li`
   align-items: flex-start;
 `;
 
-const CommentContent = styled.div`
+const CommentContent = styled.div<{ $darkMode: boolean }>`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -72,6 +76,7 @@ const CommentContent = styled.div`
 
   p {
     margin: 0;
+    color: ${({ $darkMode }) => ($darkMode ? "white" : "black")};
   }
 
   .createdAt {
@@ -89,6 +94,7 @@ const CommentUserIcon = styled.div`
 
   span {
     font-size: 18px;
+    color: "black";
   }
 `;
 
@@ -96,7 +102,6 @@ const CommentButtons = styled.div`
   display: flex;
   gap: 5px;
 `;
-///////////////////////////////////////////////////////
 
 // Comment 타입 정의 추가
 interface Comment {
@@ -110,16 +115,27 @@ interface Comment {
   createdAt: string; // 댓글 작성일
 }
 
-interface CommentComponentPorps {
-  postId: string;
+interface Post {
+  _id: string;
+  author: {
+    _id: string;
+    fullName: string;
+  };
 }
 
-const CommentComponent: React.FC<CommentComponentPorps> = ({ postId }) => {
+interface CommentComponentProps {
+  postId: string;
+  post: Post; // post 객체를 props로 추가
+}
+
+const CommentComponent: React.FC<CommentComponentProps> = ({ postId, post }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState<string>("");
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const navigate = useNavigate();
+
+  const { darkMode } = useTheme();
 
   // 댓글 목록을 GET /posts/{postId}  API를 통해 불러오기
   const fetchComments = async () => {
@@ -143,7 +159,7 @@ const CommentComponent: React.FC<CommentComponentPorps> = ({ postId }) => {
 
   // 댓글 작성 함수
   const handleAddComment = async () => {
-    const jwtToken = localStorage.getItem("jwtToken");
+    const jwtToken = localStorage.getItem("userToken");
     if (!jwtToken) {
       message.error("로그인이 필요합니다.");
       return;
@@ -172,13 +188,48 @@ const CommentComponent: React.FC<CommentComponentPorps> = ({ postId }) => {
       const newCommentData = await response.json();
       setComments((prevComments) => [...prevComments, newCommentData]); // 작성된 댓글 추가
       setNewComment(""); // 입력창 비우기
+
+      // 댓글 작성 후 알림 생성
+      await createNotification(newCommentData._id, post, jwtToken);
+
       console.log("댓글 작성 성공:", newCommentData);
     } catch (error) {
       message.error("댓글 작성 중 오류 발생");
     }
   };
-  //로그인한 사용자 ID 호출 (본일일때 삭제 버튼 활성화)
-  const fectchUserData = async () => {
+
+  // 알림 생성 함수
+  const createNotification = async (commentId: string, post: Post, jwtToken: string) => {
+    try {
+      const response = await fetch(
+        "https://kdt.frontend.5th.programmers.co.kr:5004/notifications/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify({
+            notificationType: "COMMENT", // 댓글이므로 COMMENT로 설정
+            notificationTypeId: commentId, // 작성된 댓글의 ID
+            userId: post.author._id, // 알림을 받을 포스트 작성자
+            postId: post._id, // 포스트 ID
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("알림 생성 실패");
+      }
+
+      console.log("알림 생성 완료");
+    } catch (error) {
+      console.error("알림 생성 중 오류 발생:", error);
+    }
+  };
+
+  //로그인한 사용자 ID 호출 (본인일 때 삭제 버튼 활성화)
+  const fetchUserData = async () => {
     const jwtToken = localStorage.getItem("jwtToken");
     if (!jwtToken) return;
 
@@ -191,7 +242,7 @@ const CommentComponent: React.FC<CommentComponentPorps> = ({ postId }) => {
 
       if (response.ok) {
         const userData = await response.json();
-        setCurrentUserId(userData._id); //로그인한 사용자의 Id로 설정
+        setCurrentUserId(userData._id); // 로그인한 사용자의 Id로 설정
       }
     } catch (error) {
       console.error("사용자 정보를 가져오는데 실패했습니다", error);
@@ -200,7 +251,7 @@ const CommentComponent: React.FC<CommentComponentPorps> = ({ postId }) => {
 
   useEffect(() => {
     fetchComments();
-    fectchUserData(); // 사용자 정보를 가져오기 위한 useEffect 호출 추가
+    fetchUserData(); // 사용자 정보를 가져오기 위한 useEffect 호출 추가
   }, [postId]);
 
   // 댓글 삭제 함수
@@ -244,7 +295,7 @@ const CommentComponent: React.FC<CommentComponentPorps> = ({ postId }) => {
 
   return (
     <CommentWrapper>
-      <Title>
+      <Title $darkMode={darkMode}>
         <img src="/comment_icon.png" alt="댓글 아이콘" />
         <h2>댓글</h2>
       </Title>
@@ -265,12 +316,12 @@ const CommentComponent: React.FC<CommentComponentPorps> = ({ postId }) => {
         {comments.map((comment) => (
           <CommentItem key={comment._id}>
             <CommentUserIcon onClick={() => handleAuthorClick(comment.author._id)}>
-              <UserOutlined style={{ fontSize: "50px" }} />
-              <span>{comment.author.fullName}</span>
+              <UserOutlined style={{ fontSize: "50px", color: "black" }} />
+              <span style={{ color: "black" }}>{comment.author.fullName}</span>
             </CommentUserIcon>
-            <CommentContent>
+            <CommentContent $darkMode={darkMode}>
               <div className="comment-top">
-                <p>{comment.comment}</p>
+                <p style={{ color: "black" }}>{comment.comment}</p>
               </div>
               <p className="createdAt">{new Date(comment.createdAt).toLocaleDateString("ko-KR")}</p>
             </CommentContent>

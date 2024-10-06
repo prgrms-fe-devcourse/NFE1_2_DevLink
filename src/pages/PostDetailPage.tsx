@@ -7,6 +7,7 @@ import Comment from "../components/Post/Comment";
 import LikeButtonPostDetailPage from "../components/Post/LikeButtonPostDetailPage";
 import { Highlight } from "prism-react-renderer";
 import CodeRenderer from "../components/Post/CodeRender";
+import { useTheme } from "../theme/ThemeContext";
 
 // Styled Components for layout and styles
 const PostWrapper = styled.div`
@@ -70,9 +71,9 @@ const StyledButton = styled(Button)`
   min-height: 36px;
 `;
 
-const Summary = styled.p`
+const Summary = styled.p<{ $darkMode: boolean }>`
   font-size: 18px;
-  color: #666;
+  color: ${({ $darkMode }) => ($darkMode ? "white" : "black")}
   margin-bottom: 20px;
 `;
 
@@ -189,6 +190,8 @@ const PostDetailPage: React.FC = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
 
+  const { darkMode } = useTheme();
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -219,7 +222,7 @@ const PostDetailPage: React.FC = () => {
   //로그인한 사용자 ID 호출 (본인일 때 버튼 활성화 때문)
   useEffect(() => {
     const fetchUserData = async () => {
-      const jwtToken = localStorage.getItem("jwtToken");
+      const jwtToken = localStorage.getItem("userToken");
       if (!jwtToken) return;
 
       try {
@@ -241,6 +244,11 @@ const PostDetailPage: React.FC = () => {
     fetchUserData();
   }, []);
 
+  useEffect(() => {
+    console.log("게시글 작성자 ID: ", post?.author._id);
+    console.log("현재 로그인 사용자 ID: ", currentUserId);
+  }, [post, currentUserId]);
+
   // 토글 스위치 상태 변경 핸들러
   const handleToggle = (checked: boolean) => {
     setShowPreview(checked); // 스위치 상태에 따라 showPreview 상태를 업데이트
@@ -253,7 +261,7 @@ const PostDetailPage: React.FC = () => {
 
   //삭제 함수
   const handleDelete = async (postId: string) => {
-    const jwtToken = localStorage.getItem("jwtToken");
+    const jwtToken = localStorage.getItem("userToken");
 
     if (!jwtToken) {
       message.error("로그인이 필요합니다.");
@@ -277,8 +285,8 @@ const PostDetailPage: React.FC = () => {
       }
 
       console.log("포스트가 성공적으로 삭제되었습니다.");
-      // 삭제 후 마이페이지로 네비게이터
-      navigate("/profile/:userId");
+      // 삭제 후 마이페이지로 네비게이터 (템플릿리터럴 백틱 사용!!)
+      navigate(`/profile/${post.author._id}`);
     } catch (error) {
       message.error("포스트 삭제 중 오류 발생");
     }
@@ -330,7 +338,7 @@ const PostDetailPage: React.FC = () => {
           </ButtonsWrapper>
         </FirstLineWrapper>
       </PostHeader>
-      <Summary>
+      <Summary $darkMode={darkMode}>
         {JSON.parse(post.title).summary
           ? JSON.parse(post.title).summary
           : "작성된 한줄 요약이 없습니다."}
@@ -396,7 +404,7 @@ const PostDetailPage: React.FC = () => {
         style={{ marginBottom: "70px" }}
       />
 
-      {postId && <Comment postId={postId ?? ""} />}
+      {postId && post && <Comment postId={postId} post={post} />}
     </PostWrapper>
   );
 };

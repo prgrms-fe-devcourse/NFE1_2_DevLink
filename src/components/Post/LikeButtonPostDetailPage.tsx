@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, message } from "antd";
-import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import styled from "styled-components";
+import { useTheme } from "../../theme/ThemeContext";
 
 interface LikeButtonPostDetailPageProps {
   postId: string;
@@ -13,7 +13,7 @@ interface LikeButtonPostDetailPageProps {
   style?: React.CSSProperties; // 스타일 속성 추가
 }
 
-const LikeContainer = styled.div`
+const LikeContainer = styled.div<{ $darkMode: boolean }>`
   display: flex;
   align-items: center;
   gap: 10px;
@@ -25,6 +25,9 @@ const LikeContainer = styled.div`
 
   button {
     margin: 0;
+    /* darkMode 값에 따른 밝기 조절 */
+    filter: ${({ $darkMode }) => ($darkMode ? "brightness(15)" : "brightness(1)")};
+    transition: filter 0.5s;
   }
 
   img {
@@ -41,9 +44,11 @@ const LikeButtonPostDetailPage: React.FC<LikeButtonPostDetailPageProps> = ({
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [likeId, setLikeId] = useState<string | null>(null); // 좋아요 ID 저장
 
+  const { darkMode } = useTheme();
+
   // 좋아요 처리 함수
   const handleLike = async () => {
-    const jwtToken = localStorage.getItem("jwtToken");
+    const jwtToken = localStorage.getItem("userToken");
 
     if (!jwtToken) {
       message.error("로그인이 필요합니다.");
@@ -113,10 +118,9 @@ const LikeButtonPostDetailPage: React.FC<LikeButtonPostDetailPageProps> = ({
   };
 
   return (
-    <LikeContainer style={style}>
+    <LikeContainer style={style} $darkMode={darkMode}>
       <button
-        onClick={handleLike}
-        disabled={isLiked}
+        onClick={handleLike} // 버튼을 비활성화하지 않고 상태에 따라 클릭 가능
         style={{ border: "none", background: "transparent", cursor: "pointer" }}>
         {isLiked ? (
           <img src="/heart_icon_fill_40px.png" alt="검정하트 40px" />

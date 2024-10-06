@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import PostCard from "./PostCard";
-import { useNavigate } from "react-router-dom";
 
 // Post 타입 정의
 interface Post {
@@ -19,12 +18,10 @@ interface PostListProps {
   limit?: number;
 }
 
-const PostList: React.FC<PostListProps> = ({ channelId, offset = 0, limit = 10 }) => {
+const PostList: React.FC<PostListProps> = ({ channelId, offset = 0, limit = 100 }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  const navigate = useNavigate();
 
   const fetchPosts = async () => {
     const channelId = "66fa639af51c4a015245396f"; // devlink 채널의 _id
@@ -67,7 +64,7 @@ const PostList: React.FC<PostListProps> = ({ channelId, offset = 0, limit = 10 }
   console.log(`channelId: ${channelId}`);
 
   return (
-    <div className="post-list">
+    <div>
       {posts.map((post) => (
         <div key={post._id}>
           <PostCard postId={post._id} />

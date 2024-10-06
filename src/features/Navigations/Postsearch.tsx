@@ -3,9 +3,11 @@ import inputdelete from "../../assets/images/inputdelete.png";
 import { useEffect, useState } from "react";
 import user_icon from "../../assets/images/user_icon.png";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../../theme/ThemeContext";
 
 interface postCard {
   $postClosed: boolean;
+  $darkMode: boolean;
 }
 
 const PostsearchPanel = styled.div<postCard>`
@@ -22,6 +24,7 @@ const PostsearchPanel = styled.div<postCard>`
   transition: ${(props) => (props.$postClosed ? "0.5s" : "0.1s")};
   border-radius: 15px;
   box-shadow: 0px 0px 10px black;
+  background-color: ${({ $darkMode }) => ($darkMode ? "#6c707a" : "#F9F9F9")};
 
   /*&::-webkit-scrollbar {
     display: none;
@@ -138,6 +141,8 @@ const Postsearch = ({ postClosed }: Postprops) => {
   const [titleUser, setTitleUser] = useState<User[]>([]);
   const navigate = useNavigate();
 
+  const { darkMode } = useTheme();
+
   //토큰값 POST /login 한곳에서 받아와야함
   const token = localStorage.getItem("userToken");
 
@@ -179,7 +184,7 @@ const Postsearch = ({ postClosed }: Postprops) => {
   };
 
   return (
-    <PostsearchPanel $postClosed={postClosed}>
+    <PostsearchPanel $darkMode={darkMode} $postClosed={postClosed}>
       <span className="postsearch">포스트 검색</span>
       <input type="text" onChange={onChange} value={text} maxLength={18} />
       <button onClick={Reset}></button>

@@ -1,7 +1,7 @@
 import { Editor, EditorProps, Monaco } from "@monaco-editor/react";
 import styled from "styled-components";
 import { Typography } from "antd";
-import { useEffect, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { editor } from "monaco-editor";
 
 interface CodeEditorProps {
@@ -54,35 +54,44 @@ const defaultConfig: EditorProps = {
  * <CodeEditor onChange={handleCodeChange} data={"console.log('Hello, World!');"} config={config} />
  * ```
  */
-const CodeEditor: React.FC<CodeEditorProps> = ({ onChange, data, config }) => {
-  const mergedConfig = {
-    ...defaultConfig,
-    ...config,
-  };
+const CodeEditor = forwardRef<editor.IStandaloneCodeEditor | null, CodeEditorProps>(
+  ({ onChange, data, config }, ref) => {
+    const mergedConfig = {
+      ...defaultConfig,
+      ...config,
+    };
 
-  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const isMount = useRef(false);
+    const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+    const isMount = useRef(false);
 
-  useEffect(() => {
-    if (isMount.current === true) return;
+    useEffect(() => {
+      if (isMount.current === true) return;
 
-    isMount.current = true;
+      isMount.current = true;
 
-    if (data && editorRef.current) {
-      editorRef.current.setValue(data);
-    }
-  }, [data]);
+      if (data && editorRef.current) {
+        editorRef.current.setValue(data);
+      }
+    }, [data]);
 
-  const onMountHandler = handleEditorWillMount((editor) => {
-    editorRef.current = editor;
-  });
+    useImperativeHandle(ref, () => editorRef.current as editor.IStandaloneCodeEditor);
 
-  return (
-    <Container>
-      <Editor {...mergedConfig} onChange={onChange} onMount={onMountHandler} defaultValue={data} />
-    </Container>
-  );
-};
+    const onMountHandler = handleEditorWillMount((editor) => {
+      editorRef.current = editor;
+    });
+
+    return (
+      <Container>
+        <Editor
+          {...mergedConfig}
+          onChange={onChange}
+          onMount={onMountHandler}
+          defaultValue={data}
+        />
+      </Container>
+    );
+  }
+);
 
 const handleEditorWillMount = (callback: (arg: editor.IStandaloneCodeEditor) => void) => {
   return (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
