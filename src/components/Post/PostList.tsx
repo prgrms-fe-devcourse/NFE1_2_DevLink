@@ -30,12 +30,12 @@ const PostList: React.FC<PostListProps> = ({ channelId, offset = 0, limit = 100 
       const response = await fetch(
         `https://kdt.frontend.5th.programmers.co.kr:5004/posts/channel/${channelId}?offset=${offset}&limit=${limit}`
       );
-      console.log("응답 상태:", response.status, response.statusText); // 응답 상태 출력
+      // console.log("응답 상태:", response.status, response.statusText); // 응답 상태 출력
       if (!response.ok) {
         throw new Error(`Failed to fetch posts: ${response.status} ${response.statusText}`);
       }
       const data = await response.json();
-      console.log("가져온 포스트 목록:", data); // 받아온 데이터 로깅
+      // console.log("가져온 포스트 목록:", data); // 받아온 데이터 로깅
       setPosts(data);
     } catch (error) {
       console.error("포스트 목록을 가져오는 중 오류 발생", error);
@@ -61,7 +61,7 @@ const PostList: React.FC<PostListProps> = ({ channelId, offset = 0, limit = 100 
     return <div>포스트가 없습니다 !!!</div>;
   }
 
-  console.log(`channelId: ${channelId}`);
+  // console.log(`channelId: ${channelId}`);
 
   return (
     <div>

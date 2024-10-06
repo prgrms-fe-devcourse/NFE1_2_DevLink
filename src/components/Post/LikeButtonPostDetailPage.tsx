@@ -72,9 +72,9 @@ const LikeButtonPostDetailPage: React.FC<LikeButtonPostDetailPageProps> = ({
           }
         );
 
-        console.log("좋아요 취소 응답 상태 코드", response.status);
+        // console.log("좋아요 취소 응답 상태 코드", response.status);
         const responseBody = await response.text(); // 응답 내용을 text로 확인
-        console.log("좋아요 취소 응답 바디", responseBody);
+        // console.log("좋아요 취소 응답 바디", responseBody);
 
         if (!response.ok) {
           message.error(`좋아요 취소 실패: ${response.statusText}`);
@@ -84,7 +84,7 @@ const LikeButtonPostDetailPage: React.FC<LikeButtonPostDetailPageProps> = ({
         setLikeCount((prev) => prev - 1);
         setIsLiked(false);
         setLikeId(null); // 좋아요 ID 초기화
-        console.log("좋아요 취소 처리 완료");
+        // console.log("좋아요 취소 처리 완료");
       } else {
         // 좋아요 처리
         const response = await fetch(
@@ -96,9 +96,9 @@ const LikeButtonPostDetailPage: React.FC<LikeButtonPostDetailPageProps> = ({
           }
         );
 
-        console.log("좋아요 응답 상태 코드", response.status);
+        // console.log("좋아요 응답 상태 코드", response.status);
         const responseBody = await response.text(); // 응답 내용을 text로 확인
-        console.log("좋아요 응답 바디", responseBody);
+        // console.log("좋아요 응답 바디", responseBody);
 
         if (!response.ok) {
           message.error(`좋아요 처리 실패: ${response.statusText}`);
@@ -109,7 +109,7 @@ const LikeButtonPostDetailPage: React.FC<LikeButtonPostDetailPageProps> = ({
         setLikeCount((prev) => prev + 1);
         setIsLiked(true);
         setLikeId(data._id); // 좋아요 ID 저장
-        console.log("좋아요 처리 완료", data);
+        // console.log("좋아요 처리 완료", data);
       }
     } catch (error) {
       console.error("좋아요 처리 중 오류 발생:", error);

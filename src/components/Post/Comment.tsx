@@ -192,7 +192,7 @@ const CommentComponent: React.FC<CommentComponentProps> = ({ postId, post }) => 
       // 댓글 작성 후 알림 생성
       await createNotification(newCommentData._id, post, jwtToken);
 
-      console.log("댓글 작성 성공:", newCommentData);
+      // console.log("댓글 작성 성공:", newCommentData);
     } catch (error) {
       message.error("댓글 작성 중 오류 발생");
     }
@@ -222,7 +222,7 @@ const CommentComponent: React.FC<CommentComponentProps> = ({ postId, post }) => 
         throw new Error("알림 생성 실패");
       }
 
-      console.log("알림 생성 완료");
+      // console.log("알림 생성 완료");
     } catch (error) {
       console.error("알림 생성 중 오류 발생:", error);
     }
@@ -282,7 +282,7 @@ const CommentComponent: React.FC<CommentComponentProps> = ({ postId, post }) => 
       }
 
       setComments((prevComments) => prevComments.filter((comment) => comment._id !== commentId));
-      console.log("댓글 삭제 성공:", commentId);
+      // console.log("댓글 삭제 성공:", commentId);
     } catch (error) {
       message.error("댓글 삭제 중 오류 발생");
     }

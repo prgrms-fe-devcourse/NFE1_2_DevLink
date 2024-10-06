@@ -245,8 +245,8 @@ const PostDetailPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    console.log("게시글 작성자 ID: ", post?.author._id);
-    console.log("현재 로그인 사용자 ID: ", currentUserId);
+    // console.log("게시글 작성자 ID: ", post?.author._id);
+    // console.log("현재 로그인 사용자 ID: ", currentUserId);
   }, [post, currentUserId]);
 
   // 토글 스위치 상태 변경 핸들러
@@ -284,7 +284,7 @@ const PostDetailPage: React.FC = () => {
         throw new Error("포스트 삭제 실패");
       }
 
-      console.log("포스트가 성공적으로 삭제되었습니다.");
+      // console.log("포스트가 성공적으로 삭제되었습니다.");
       // 삭제 후 마이페이지로 네비게이터 (템플릿리터럴 백틱 사용!!)
       navigate(`/profile/${post.author._id}`);
     } catch (error) {

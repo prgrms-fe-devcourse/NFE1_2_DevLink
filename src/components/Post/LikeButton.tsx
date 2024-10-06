@@ -86,7 +86,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ post, initialLikeCount, style }
         setLikeCount((prev) => prev - 1);
         setIsLiked(false);
         setLikeId(null); // 좋아요 ID 초기화
-        console.log("좋아요 취소 처리 완료");
+        // console.log("좋아요 취소 처리 완료");
       } else {
         // 좋아요 처리
         const response = await fetch(
@@ -107,7 +107,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ post, initialLikeCount, style }
         setLikeCount((prev) => prev + 1);
         setIsLiked(true);
         setLikeId(data._id); // 좋아요 ID 저장
-        console.log("좋아요 처리 완료");
+        // console.log("좋아요 처리 완료");
 
         // 알림 생성 요청
         await createNotification(data._id, post, jwtToken);
@@ -141,7 +141,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ post, initialLikeCount, style }
         throw new Error("알림 생성 실패");
       }
 
-      console.log("알림 생성 완료");
+      // console.log("알림 생성 완료");
     } catch (error) {
       console.error("알림 생성 중 오류 발생:", error);
     }
