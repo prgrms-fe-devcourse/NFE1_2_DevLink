@@ -8,9 +8,10 @@ import { useTheme } from "../../theme/ThemeContext";
 const EditProfileModal = styled.div`
   position: absolute;
   top: 250px;
-  width: 400px;
-  height: 500px;
+  width: 500px;
+  height: 600px;
   padding: 50px;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -27,7 +28,7 @@ const LogoStyle = styled.img`
 
 // 입력 필드 스타일
 const InputStyle = styled.input`
-  width: 370px;
+  width: 400px;
   padding: 15px;
   margin-top: 30px;
 `;
