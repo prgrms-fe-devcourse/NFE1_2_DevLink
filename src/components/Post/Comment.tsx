@@ -10,7 +10,7 @@ const CommentWrapper = styled.div`
   margin-top: 20px;
 `;
 
-const Title = styled.div<{ darkMode: boolean }>`
+const Title = styled.div<{ $darkMode: boolean }>`
   display: flex;
   align-items: center;
   gap: 17px;
@@ -18,7 +18,7 @@ const Title = styled.div<{ darkMode: boolean }>`
   img {
     margin: 0;
     /* darkMode 값에 따른 밝기 조절 */
-    filter: ${({ darkMode }) => (darkMode ? "brightness(15)" : "brightness(1)")};
+    filter: ${({ $darkMode }) => ($darkMode ? "brightness(15)" : "brightness(1)")};
     transition: filter 0.5s;
   }
 
@@ -58,7 +58,7 @@ const CommentItem = styled.li`
   align-items: flex-start;
 `;
 
-const CommentContent = styled.div<{ darkMode: boolean }>`
+const CommentContent = styled.div<{ $darkMode: boolean }>`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -76,7 +76,7 @@ const CommentContent = styled.div<{ darkMode: boolean }>`
 
   p {
     margin: 0;
-    color: ${({ darkMode }) => (darkMode ? "white" : "black")};
+    color: ${({ $darkMode }) => ($darkMode ? "white" : "black")};
   }
 
   .createdAt {
@@ -295,7 +295,7 @@ const CommentComponent: React.FC<CommentComponentProps> = ({ postId, post }) => 
 
   return (
     <CommentWrapper>
-      <Title darkMode={darkMode}>
+      <Title $darkMode={darkMode}>
         <img src="/comment_icon.png" alt="댓글 아이콘" />
         <h2>댓글</h2>
       </Title>
@@ -319,7 +319,7 @@ const CommentComponent: React.FC<CommentComponentProps> = ({ postId, post }) => 
               <UserOutlined style={{ fontSize: "50px", color: "black" }} />
               <span style={{ color: "black" }}>{comment.author.fullName}</span>
             </CommentUserIcon>
-            <CommentContent darkMode={darkMode}>
+            <CommentContent $darkMode={darkMode}>
               <div className="comment-top">
                 <p style={{ color: "black" }}>{comment.comment}</p>
               </div>

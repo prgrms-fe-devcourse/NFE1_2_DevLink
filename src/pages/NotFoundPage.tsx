@@ -4,15 +4,15 @@ import styled from "styled-components";
 import { Button, Result } from "antd";
 import { useTheme } from "../theme/ThemeContext";
 
-const PageStyle = styled.div<{ darkMode: boolean }>`
+const PageStyle = styled.div<{ $darkMode: boolean }>`
   width: 1055px;
   height: 645px;
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 30px auto 0;
-  background-color: ${({ darkMode }) => (darkMode ? "#888b97" : "#F9F9F9")};
-  border: ${({ darkMode }) => (darkMode ? " 1px solid #6c707a" : " 1px solid #efefef")};
+  background-color: ${({ $darkMode }) => ($darkMode ? "#888b97" : "#F9F9F9")};
+  border: ${({ $darkMode }) => ($darkMode ? " 1px solid #6c707a" : " 1px solid #efefef")};
 `;
 
 const NotFoundPage = () => {
@@ -21,7 +21,7 @@ const NotFoundPage = () => {
   const { darkMode } = useTheme();
 
   return (
-    <PageStyle darkMode={darkMode}>
+    <PageStyle $darkMode={darkMode}>
       <Result
         status="404"
         title="Page Not Found"

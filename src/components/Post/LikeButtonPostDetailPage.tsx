@@ -13,7 +13,7 @@ interface LikeButtonPostDetailPageProps {
   style?: React.CSSProperties; // 스타일 속성 추가
 }
 
-const LikeContainer = styled.div<{ darkMode: boolean }>`
+const LikeContainer = styled.div<{ $darkMode: boolean }>`
   display: flex;
   align-items: center;
   gap: 10px;
@@ -26,7 +26,7 @@ const LikeContainer = styled.div<{ darkMode: boolean }>`
   button {
     margin: 0;
     /* darkMode 값에 따른 밝기 조절 */
-    filter: ${({ darkMode }) => (darkMode ? "brightness(15)" : "brightness(1)")};
+    filter: ${({ $darkMode }) => ($darkMode ? "brightness(15)" : "brightness(1)")};
     transition: filter 0.5s;
   }
 
@@ -118,7 +118,7 @@ const LikeButtonPostDetailPage: React.FC<LikeButtonPostDetailPageProps> = ({
   };
 
   return (
-    <LikeContainer style={style} darkMode={darkMode}>
+    <LikeContainer style={style} $darkMode={darkMode}>
       <button
         onClick={handleLike} // 버튼을 비활성화하지 않고 상태에 따라 클릭 가능
         style={{ border: "none", background: "transparent", cursor: "pointer" }}>

@@ -28,7 +28,7 @@ const LogoImg = styled.img`
   }
 `;
 
-const HeaderButtons = styled.div<{ darkMode: boolean }>`
+const HeaderButtons = styled.div<{ $darkMode: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -39,7 +39,7 @@ const HeaderButtons = styled.div<{ darkMode: boolean }>`
   margin-right: 10px;
   font-size: 15px;
 
-  filter: ${({ darkMode }) => (darkMode ? "brightness(2)" : "brightness(1)")};
+  filter: ${({ $darkMode }) => ($darkMode ? "brightness(2)" : "brightness(1)")};
   transition: filter 0.5s;
 
   img {
@@ -145,7 +145,7 @@ const Header: React.FC = () => {
     <HeaderBackground>
       <LogoImg onClick={() => navigate("/")} src={devlinkLogo} alt="devlink-logo" />
       {isLogin ? (
-        <HeaderButtons darkMode={darkMode}>
+        <HeaderButtons $darkMode={darkMode}>
           <label
             onClick={() => {
               onClickSignout();
@@ -161,7 +161,7 @@ const Header: React.FC = () => {
           </label>
         </HeaderButtons>
       ) : (
-        <HeaderButtons darkMode={darkMode}>
+        <HeaderButtons $darkMode={darkMode}>
           <label
             onClick={() => {
               navigate("/signup");

@@ -71,9 +71,9 @@ const StyledButton = styled(Button)`
   min-height: 36px;
 `;
 
-const Summary = styled.p<{ darkMode: boolean }>`
+const Summary = styled.p<{ $darkMode: boolean }>`
   font-size: 18px;
-  color: ${({ darkMode }) => (darkMode ? "white" : "black")}
+  color: ${({ $darkMode }) => ($darkMode ? "white" : "black")}
   margin-bottom: 20px;
 `;
 
@@ -338,7 +338,7 @@ const PostDetailPage: React.FC = () => {
           </ButtonsWrapper>
         </FirstLineWrapper>
       </PostHeader>
-      <Summary darkMode={darkMode}>
+      <Summary $darkMode={darkMode}>
         {JSON.parse(post.title).summary
           ? JSON.parse(post.title).summary
           : "작성된 한줄 요약이 없습니다."}

@@ -14,13 +14,13 @@ import Notification from "../../features/Navigations/Notification";
 import Postsearch from "../../features/Navigations/Postsearch";
 import { useTheme } from "../../theme/ThemeContext";
 
-const Navcontainer = styled.div<{ darkMode: boolean }>`
+const Navcontainer = styled.div<{ $darkMode: boolean }>`
   border-right: 1.5px solid black;
   align-items: center;
   float: left;
   /* darkMode 값에 따른 색상 조절 */
-  background-color: ${({ darkMode }) => (darkMode ? "#44474e" : "#F9F9F9")};
-  color: ${({ darkMode }) => (darkMode ? "white" : "black")};
+  background-color: ${({ $darkMode }) => ($darkMode ? "#44474e" : "#F9F9F9")};
+  color: ${({ $darkMode }) => ($darkMode ? "white" : "black")};
   width: 200px;
   height: 100vh;
   overflow: hidden;
@@ -39,12 +39,12 @@ const Navcontainer = styled.div<{ darkMode: boolean }>`
   }
 `;
 
-const Button = styled.button<{ darkMode: boolean }>`
+const Button = styled.button<{ $darkMode: boolean }>`
   display: flex;
   border: 0;
   /* darkMode 값에 따른 색상 조절 */
-  background-color: ${({ darkMode }) => (darkMode ? "#44474e" : "#F9F9F9")};
-  color: ${({ darkMode }) => (darkMode ? "white" : "black")};
+  background-color: ${({ $darkMode }) => ($darkMode ? "#44474e" : "#F9F9F9")};
+  color: ${({ $darkMode }) => ($darkMode ? "white" : "black")};
   margin: 50px 30px;
   font-size: 15px;
   cursor: pointer;
@@ -52,7 +52,7 @@ const Button = styled.button<{ darkMode: boolean }>`
 
   img {
     /* darkMode 값에 따른 밝기 조절 */
-    filter: ${({ darkMode }) => (darkMode ? "brightness(1.75)" : "brightness(1)")};
+    filter: ${({ $darkMode }) => ($darkMode ? "brightness(1.75)" : "brightness(1)")};
     transition: filter 0.5s;
   }
 
@@ -152,11 +152,11 @@ const NavigationBar = () => {
       {notiOpen && <Notification isClosed={!showNav} />}
       {postOpen && <Postsearch postClosed={!showNav} />}
 
-      <Navcontainer className={showNav ? "" : "closeNav"} darkMode={darkMode}>
+      <Navcontainer className={showNav ? "" : "closeNav"} $darkMode={darkMode}>
         <Button
           onClick={() => navigate("/")}
           className={showNav ? "" : "btncloseNav"}
-          darkMode={darkMode}>
+          $darkMode={darkMode}>
           <img src={home} alt="home" />
           <span>홈페이지</span>
         </Button>
@@ -164,17 +164,17 @@ const NavigationBar = () => {
         <Button
           onClick={() => navigate("/post/create")}
           className={showNav ? "" : "btncloseNav"}
-          darkMode={darkMode}>
+          $darkMode={darkMode}>
           <img src={postgeneration} alt="postgeneration" />
           <span>포스트 생성</span>
         </Button>
 
-        <Button onClick={postHandler} className={showNav ? "" : "btncloseNav"} darkMode={darkMode}>
+        <Button onClick={postHandler} className={showNav ? "" : "btncloseNav"} $darkMode={darkMode}>
           <img src={postsearch} alt="postsearch" />
           <span>포스트 검색</span>
         </Button>
 
-        <Button onClick={notiHandler} className={showNav ? "" : "btncloseNav"} darkMode={darkMode}>
+        <Button onClick={notiHandler} className={showNav ? "" : "btncloseNav"} $darkMode={darkMode}>
           <Alarm isClosed={!showNav}>
             <img src={alarm} alt="alarm" />
           </Alarm>
@@ -182,7 +182,7 @@ const NavigationBar = () => {
         </Button>
 
         {/* 다크모드 버튼 - 클릭시 themeToggle 함수 실행 */}
-        <Button className={showNav ? "" : "btncloseNav"} onClick={themeToggle} darkMode={darkMode}>
+        <Button className={showNav ? "" : "btncloseNav"} onClick={themeToggle} $darkMode={darkMode}>
           <img src={darkmode} alt="darkmode" />
           <span>다크 모드</span>
         </Button>
@@ -191,7 +191,7 @@ const NavigationBar = () => {
         <Button
           onClick={() => profile && navigate(`/profile/${profile._id}`)}
           className={showNav ? "" : "btncloseNav"}
-          darkMode={darkMode}>
+          $darkMode={darkMode}>
           <img src={mypage} alt="mypage" />
           <span>마이페이지</span>
         </Button>
@@ -199,7 +199,7 @@ const NavigationBar = () => {
         <Button
           onClick={() => setShowNav(!showNav)}
           className={showNav ? "" : "btncloseNav"}
-          darkMode={darkMode}>
+          $darkMode={darkMode}>
           <img src={showNav ? reduction : expantion} alt="reduction" />
           <span>축소</span>
         </Button>
