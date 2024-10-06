@@ -16,17 +16,18 @@ const PostLayout: React.FC<PropsWithChildren> = ({ children }) => {
         <NavigationBar />
       </Sider>
       <Layout>
-        <Container darkMode={darkMode}>{children}</Container>
+        <Container $darkMode={darkMode}>{children}</Container>
       </Layout>
     </Layout>
   );
 };
 
-const Container = styled(Content)<{ darkMode: boolean }>`
+const Container = styled(Content)<{ $darkMode: boolean }>`
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: ${config.style.outerBackground};
+  background-color: ${({ $darkMode }) => ($darkMode ? "#44474e" : "#F9F9F9")};
+  transition: background-color 0.5s;
   padding: 40px;
 `;
 

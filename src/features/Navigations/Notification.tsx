@@ -7,7 +7,7 @@ import { useTheme } from "../../theme/ThemeContext";
 
 interface NotificationPanelProps {
   $isClosed: boolean;
-  darkMode: boolean;
+  $darkMode: boolean;
 }
 
 const NotificationPanel = styled.div<NotificationPanelProps>`
@@ -24,7 +24,7 @@ const NotificationPanel = styled.div<NotificationPanelProps>`
   transition: ${(props) => (props.$isClosed ? "0.5s" : "0.1s")};
   border-radius: 15px;
   box-shadow: 0px 0px 10px black;
-  background-color: ${({ darkMode }) => (darkMode ? "#6c707a" : "#F9F9F9")};
+  background-color: ${({ $darkMode }) => ($darkMode ? "#6c707a" : "#F9F9F9")};
 
   .notifications {
     position: absolute;
@@ -292,7 +292,7 @@ const Notification: React.FC<Notiprops> = ({ isClosed }) => {
   const { darkMode } = useTheme();
 
   return (
-    <NotificationPanel $isClosed={isClosed} darkMode={darkMode}>
+    <NotificationPanel $isClosed={isClosed} $darkMode={darkMode}>
       <span className="notifications">Notifications</span>
 
       <div className="todaycontainer">

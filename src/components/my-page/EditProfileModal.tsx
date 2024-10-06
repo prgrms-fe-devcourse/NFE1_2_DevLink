@@ -33,7 +33,7 @@ const InputStyle = styled.input`
 `;
 
 // 요구 사항 스타일
-const Requirements = styled.div<{ darkMode: boolean }>`
+const Requirements = styled.div<{ $darkMode: boolean }>`
   margin-left: 5px;
   margin-top: 5px;
   width: 300px;
@@ -187,7 +187,7 @@ const EditProfileModalComponent: React.FC<EditProfileModalProps> = ({
           value={inputFullName}
           onChange={(e) => setInputFullName(e.target.value)}
         />
-        <Requirements darkMode={darkMode}>이름은 1~8자 사이여야 합니다.</Requirements>
+        <Requirements $darkMode={darkMode}>이름은 1~8자 사이여야 합니다.</Requirements>
 
         <InputStyle
           type="password"
@@ -196,7 +196,7 @@ const EditProfileModalComponent: React.FC<EditProfileModalProps> = ({
           value={inputPassword}
           onChange={(e) => setInputPassword(e.target.value)}
         />
-        <Requirements darkMode={darkMode}>
+        <Requirements $darkMode={darkMode}>
           비밀번호는 영문+특수문자+숫자를 포함한 8~16자여야 합니다.
         </Requirements>
 
@@ -207,7 +207,7 @@ const EditProfileModalComponent: React.FC<EditProfileModalProps> = ({
           value={inputCheckPassword}
           onChange={(e) => setInputCheckPassword(e.target.value)}
         />
-        <Requirements darkMode={darkMode}>
+        <Requirements $darkMode={darkMode}>
           비밀번호는 영문+특수문자+숫자를 포함한 8~16자여야 합니다.
         </Requirements>
 
