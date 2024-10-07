@@ -12,13 +12,12 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 // 전역 스타일 지정
 const GlobalStyle = createGlobalStyle<{ darkMode: boolean }>`
-     * {
+     
+
+   body {
      margin: 0;
      padding: 0;
      box-sizing: border-box;
-   }
-
-   body {
      transition: background-color 0.5s, color 0.5s;
      background-color: ${({ darkMode }) => (darkMode ? "#44474e" : "#F9F9F9")};
      color: ${({ darkMode }) => (darkMode ? "white" : "black")};
