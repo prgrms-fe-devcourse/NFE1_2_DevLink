@@ -19,9 +19,6 @@ const GlobalStyle = createGlobalStyle<{ darkMode: boolean }>`
    }
 
    body {
-     margin: 0;
-     padding: 0;
-     box-sizing: border-box;
      transition: background-color 0.5s, color 0.5s;
      background-color: ${({ darkMode }) => (darkMode ? "#44474e" : "#F9F9F9")};
      color: ${({ darkMode }) => (darkMode ? "white" : "black")};
