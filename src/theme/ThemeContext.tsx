@@ -12,11 +12,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 // 전역 스타일 지정
 const GlobalStyle = createGlobalStyle<{ darkMode: boolean }>`
-     * {
-     margin: 0;
-     padding: 0;
-     box-sizing: border-box;
-   }
+     
 
    body {
      margin: 0;
