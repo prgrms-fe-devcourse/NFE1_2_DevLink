@@ -3,9 +3,11 @@ import inputdelete from "../../assets/images/inputdelete.png";
 import { useEffect, useState } from "react";
 import user_icon from "../../assets/images/user_icon.png";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../../theme/ThemeContext";
 
 interface postCard {
   $postClosed: boolean;
+  $darkMode: boolean;
 }
 
 const PostsearchPanel = styled.div<postCard>`
@@ -19,9 +21,12 @@ const PostsearchPanel = styled.div<postCard>`
   z-index: 1000;
   color: black;
   // 트랜지션 값 펼쳐지고 닫힐때 조절
-  transition: ${(props) => (props.$postClosed ? "0.5s" : "0.1s")};
+  transition:
+    ${(props) => (props.$postClosed ? "0.5s" : "0.1s")},
+    background-color 0.5s;
   border-radius: 15px;
   box-shadow: 0px 0px 10px black;
+  background-color: ${({ $darkMode }) => ($darkMode ? "#6c707a" : "#F9F9F9")};
 
   /*&::-webkit-scrollbar {
     display: none;
@@ -138,6 +143,8 @@ const Postsearch = ({ postClosed }: Postprops) => {
   const [titleUser, setTitleUser] = useState<User[]>([]);
   const navigate = useNavigate();
 
+  const { darkMode } = useTheme();
+
   const token = localStorage.getItem("userToken");
 
   useEffect(() => {
@@ -175,7 +182,7 @@ const Postsearch = ({ postClosed }: Postprops) => {
   };
 
   return (
-    <PostsearchPanel $postClosed={postClosed}>
+    <PostsearchPanel $darkMode={darkMode} $postClosed={postClosed}>
       <span className="postsearch">포스트 검색</span>
       <input type="text" onChange={onChange} value={text} maxLength={18} />
       <button onClick={Reset}></button>

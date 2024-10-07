@@ -21,7 +21,9 @@ const NotificationPanel = styled.div<NotificationPanelProps>`
   z-index: 1000;
   color: black;
   // 트랜지션 값 펼쳐지고 닫힐때 조절
-  transition: ${(props) => (props.$isClosed ? "0.5s" : "0.1s")};
+  transition:
+    ${(props) => (props.$isClosed ? "0.5s" : "0.1s")},
+    background-color 0.5s;
   border-radius: 15px;
   box-shadow: 0px 0px 10px black;
   background-color: ${({ $darkMode }) => ($darkMode ? "#6c707a" : "#F9F9F9")};
